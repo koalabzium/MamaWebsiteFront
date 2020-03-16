@@ -1,18 +1,21 @@
 import React, { Component } from "react";
 import axios from "axios";
 import Like from "./common/like";
+import Pagination from "./common/pagination";
+import { paginate } from "../utils/paginate";
 
 export class BooksView extends Component {
   state = {
     books: [],
     liked: [],
-    likedSet: new Set()
+    likedSet: new Set(),
+    pageSize: 1,
+    currentPage: 1
   };
 
   async componentDidMount() {
-    const { data: books } = await axios.get(
-      "https://us-central1-mamusialibrary.cloudfunctions.net/app/books"
-    );
+    const url = require("../apiURL.json");
+    const { data: books } = await axios.get(url.url);
     this.setState({ books });
     const liked =
       localStorage.getItem("likedBooks") === null
@@ -32,7 +35,7 @@ export class BooksView extends Component {
     let likedSet = this.state.likedSet;
 
     if (likedSet.has(book.title)) {
-      liked = liked.filter(b => b.title != book.title);
+      liked = liked.filter(b => b.title !== book.title);
       likedSet.delete(book.title);
     } else {
       liked.push(book);
@@ -43,8 +46,14 @@ export class BooksView extends Component {
     localStorage.setItem("likedBooks", JSON.stringify(liked));
   };
 
+  handlePageChange = page => {
+    this.setState({ currentPage: page });
+  };
+
   render() {
-    if (this.state.books.length === 0)
+    const { books, liked, likedSet, pageSize, currentPage } = this.state;
+    const slicedBooks = paginate(books, currentPage, pageSize);
+    if (books.length === 0)
       return (
         <div>
           <h2>Ładowanie...</h2>
@@ -64,11 +73,11 @@ export class BooksView extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.books.map(book => (
+            {slicedBooks.map(book => (
               <tr key={book.title}>
                 <td>
                   <Like
-                    liked={this.state.likedSet.has(book.title)}
+                    liked={likedSet.has(book.title)}
                     onClickToggle={() => this.handleLike(book)}
                   />
                 </td>
@@ -91,9 +100,15 @@ export class BooksView extends Component {
             ))}
           </tbody>
         </table>
+        <Pagination
+          itemsCount={books.length}
+          pageSize={pageSize}
+          onPageChange={this.handlePageChange}
+          currentPage={currentPage}
+        />
         <h3>Twoje polubione książki: </h3>
         <ul>
-          {this.state.liked.map(book => (
+          {liked.map(book => (
             <li key={book.title}>{book.title}</li>
           ))}
         </ul>
