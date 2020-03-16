@@ -4,26 +4,24 @@ import { faHeart as fullHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as emptyHeart } from "@fortawesome/free-regular-svg-icons";
 import PropTypes from "prop-types";
 
-export class Like extends Component {
-  render() {
-    const { liked, onClickToggle } = this.props;
-    let heartClass = emptyHeart;
-    if (liked) {
-      heartClass = fullHeart;
-    }
-    return (
-      <React.Fragment>
-        <FontAwesomeIcon
-          onClick={onClickToggle}
-          icon={heartClass}
-          style={{ cursor: "pointer" }}
-        />
-      </React.Fragment>
-    );
+const Like = props => {
+  const { liked, onClickToggle } = props;
+  let heartClass = emptyHeart;
+  if (liked) {
+    heartClass = fullHeart;
   }
-}
+  return (
+    <React.Fragment>
+      <FontAwesomeIcon
+        onClick={onClickToggle}
+        icon={heartClass}
+        style={{ cursor: "pointer" }}
+      />
+    </React.Fragment>
+  );
+};
 
-Like.PropTypes = {
+Like.propTypes = {
   liked: PropTypes.bool.isRequired,
   onClickToggle: PropTypes.func.isRequired
 };

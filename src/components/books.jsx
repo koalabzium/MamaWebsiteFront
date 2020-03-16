@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import axios from "axios";
-import Like from "./common/like";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
+import BooksTable from "./booksTable";
 
 export class BooksView extends Component {
   state = {
@@ -61,45 +61,12 @@ export class BooksView extends Component {
       );
     return (
       <React.Fragment>
-        <table className="table">
-          <thead>
-            <tr>
-              <th />
-              <th>Tytuł</th>
-              <th>Autor(ka)</th>
-              <th>Link</th>
-              <th>Okładka</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {slicedBooks.map(book => (
-              <tr key={book.title}>
-                <td>
-                  <Like
-                    liked={likedSet.has(book.title)}
-                    onClickToggle={() => this.handleLike(book)}
-                  />
-                </td>
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>{book.link}</td>
-                <td>
-                  <img src={`data:image/jpeg;base64,${book.image}`} />
-                </td>
-
-                <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => this.handleDelete(book)}
-                  >
-                    X
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <BooksTable
+          slicedBooks={slicedBooks}
+          likedSet={likedSet}
+          onLike={this.handleLike}
+          onDelete={this.handleDelete}
+        />
         <Pagination
           itemsCount={books.length}
           pageSize={pageSize}
