@@ -3,14 +3,20 @@ import axios from "axios";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import BooksTable from "./booksTable";
+import LikedBooks from "./likedBooks";
+import _ from "lodash";
 
 export class BooksView extends Component {
   state = {
     books: [],
     liked: [],
     likedSet: new Set(),
-    pageSize: 1,
-    currentPage: 1
+    pageSize: 2,
+    currentPage: 1,
+    sortColumn: {
+      name: "title",
+      order: "asc"
+    }
   };
 
   async componentDidMount() {
@@ -50,9 +56,28 @@ export class BooksView extends Component {
     this.setState({ currentPage: page });
   };
 
+  handleSort = column => {
+    let sortColumn = this.state.sortColumn;
+    if (sortColumn.name === column) {
+      sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
+    } else {
+      sortColumn = { name: column, order: "asc" };
+    }
+    this.setState({ sortColumn });
+  };
+
   render() {
-    const { books, liked, likedSet, pageSize, currentPage } = this.state;
-    const slicedBooks = paginate(books, currentPage, pageSize);
+    const {
+      books,
+      liked,
+      likedSet,
+      pageSize,
+      currentPage,
+      sortColumn
+    } = this.state;
+    const sorted = _.orderBy(books, [sortColumn.name], [sortColumn.order]);
+    const slicedBooks = paginate(sorted, currentPage, pageSize);
+
     if (books.length === 0)
       return (
         <div>
@@ -62,10 +87,11 @@ export class BooksView extends Component {
     return (
       <React.Fragment>
         <BooksTable
-          slicedBooks={slicedBooks}
+          books={slicedBooks}
           likedSet={likedSet}
           onLike={this.handleLike}
           onDelete={this.handleDelete}
+          onSort={this.handleSort}
         />
         <Pagination
           itemsCount={books.length}
@@ -73,12 +99,7 @@ export class BooksView extends Component {
           onPageChange={this.handlePageChange}
           currentPage={currentPage}
         />
-        <h3>Twoje polubione książki: </h3>
-        <ul>
-          {liked.map(book => (
-            <li key={book.title}>{book.title}</li>
-          ))}
-        </ul>
+        <LikedBooks liked={liked} />
       </React.Fragment>
     );
   }
