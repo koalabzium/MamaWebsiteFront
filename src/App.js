@@ -5,6 +5,7 @@ import BooksView from "./components/books";
 import Navigation from "./components/naviagtion";
 import AdminPanel from "./components/adminPanel";
 import NotFound from "./components/notFound";
+import BookDetails from "./components/bookDetails";
 
 class App extends Component {
   state = {};
@@ -14,6 +15,7 @@ class App extends Component {
         <Navigation />
         <main className="container m-3">
           <Switch>
+            <Route path="/books/:title" component={BookDetails}></Route>
             <Route path="/books" exact component={BooksView}></Route>
             <Route path="/admin" component={AdminPanel}></Route>
             <Route path="/not-found" component={NotFound}></Route>

@@ -8,13 +8,8 @@ class BooksTable extends Component {
     redirect: false
   };
 
-  handleRowClick = book => {
-    this.setState({ redirect: `/books/${book.title}` });
-    console.log(`books/${book.title}`);
-  };
-
   render() {
-    const { books, likedSet, onLike, onDelete, onSort } = this.props;
+    const { books, likedSet, onLike, onDelete, onSort, history } = this.props;
 
     if (this.state.redirect) {
       return <Redirect to={this.state.redirect} />;
@@ -40,7 +35,7 @@ class BooksTable extends Component {
             {books.map(book => (
               <tr
                 className="clickable"
-                onClick={() => this.handleRowClick(book)}
+                onClick={() => history.push(`/books/${book.title}`)}
                 key={book.title}
               >
                 <td>

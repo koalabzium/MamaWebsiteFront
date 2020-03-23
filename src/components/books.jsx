@@ -107,6 +107,7 @@ export class BooksView extends Component {
         <BooksTable
           books={slicedBooks}
           likedSet={likedSet}
+          history={this.props.history}
           onLike={this.handleLike}
           onDelete={this.handleDelete}
           onSort={this.handleSort}
