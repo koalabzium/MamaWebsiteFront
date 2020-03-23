@@ -5,6 +5,7 @@ import { paginate } from "../utils/paginate";
 import BooksTable from "./booksTable";
 import LikedBooks from "./likedBooks";
 import _ from "lodash";
+import Categories from "./categories";
 
 export class BooksView extends Component {
   state = {
@@ -16,13 +17,17 @@ export class BooksView extends Component {
     sortColumn: {
       name: "title",
       order: "asc"
-    }
+    },
+    categories: [],
+    currentCategory: null
   };
 
   async componentDidMount() {
     const url = require("../apiURL.json");
-    const { data: books } = await axios.get(url.url);
+    const { data: books } = await axios.get(url.url + "books");
+    const { data: categories } = await axios.get(url.url + "categories");
     this.setState({ books });
+    this.setState({ categories });
     const liked =
       localStorage.getItem("likedBooks") === null
         ? []
@@ -66,6 +71,11 @@ export class BooksView extends Component {
     this.setState({ sortColumn });
   };
 
+  handleFilter = category => {
+    console.log(category);
+    this.setState({ currentCategory: category });
+  };
+
   render() {
     const {
       books,
@@ -73,9 +83,15 @@ export class BooksView extends Component {
       likedSet,
       pageSize,
       currentPage,
-      sortColumn
+      sortColumn,
+      categories,
+      currentCategory
     } = this.state;
-    const sorted = _.orderBy(books, [sortColumn.name], [sortColumn.order]);
+    const filtered =
+      currentCategory !== null
+        ? books.filter(book => book.category === currentCategory)
+        : books;
+    const sorted = _.orderBy(filtered, [sortColumn.name], [sortColumn.order]);
     const slicedBooks = paginate(sorted, currentPage, pageSize);
 
     if (books.length === 0)
@@ -86,6 +102,8 @@ export class BooksView extends Component {
       );
     return (
       <React.Fragment>
+        <Categories categories={categories} onFilter={this.handleFilter} />
+
         <BooksTable
           books={slicedBooks}
           likedSet={likedSet}

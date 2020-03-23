@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  padding: 30px;
+
   font-family: sans-serif;
 }
 
@@ -11,4 +11,8 @@ code {
 
 img {
   max-height: 30%;
+}
+
+.clickable {
+  cursor: pointer;
 }

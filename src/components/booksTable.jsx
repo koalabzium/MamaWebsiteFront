@@ -1,54 +1,79 @@
-import React from "react";
+import React, { Component } from "react";
 import Like from "./common/like";
+import { Link, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
 
-const BooksTable = props => {
-  const { books, likedSet, onLike, onDelete, onSort } = props;
+class BooksTable extends Component {
+  state = {
+    redirect: false
+  };
 
-  return (
-    <div className="table-responsive">
-      <table className="table table-hover">
-        <thead>
-          <tr>
-            <th />
-            <th onClick={() => onSort("title")}>Tytuł</th>
-            <th onClick={() => onSort("author")}>Autor(ka)</th>
-            <th>Link</th>
-            <th>Okładka</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {books.map(book => (
-            <tr key={book.title}>
-              <td>
-                <Like
-                  liked={likedSet.has(book.title)}
-                  onClickToggle={() => onLike(book)}
-                />
-              </td>
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>{book.link}</td>
-              <td>
-                <img src={`data:image/jpeg;base64,${book.image}`} />
-              </td>
+  handleRowClick = book => {
+    this.setState({ redirect: `/books/${book.title}` });
+    console.log(`books/${book.title}`);
+  };
 
-              <td>
-                <button
-                  className="btn btn-danger btn-sm"
-                  onClick={() => onDelete(book)}
-                >
-                  X
-                </button>
-              </td>
+  render() {
+    const { books, likedSet, onLike, onDelete, onSort } = this.props;
+
+    if (this.state.redirect) {
+      return <Redirect to={this.state.redirect} />;
+    }
+    return (
+      <div className="table-responsive">
+        <table className="table table-hover">
+          <thead>
+            <tr>
+              <th />
+              <th className="clickable" onClick={() => onSort("title")}>
+                Tytuł
+              </th>
+              <th className="clickable" onClick={() => onSort("author")}>
+                Autor(ka)
+              </th>
+              <th>Kategoria</th>
+              <th>Okładka</th>
+              <th></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-};
+          </thead>
+          <tbody>
+            {books.map(book => (
+              <tr
+                className="clickable"
+                onClick={() => this.handleRowClick(book)}
+                key={book.title}
+              >
+                <td>
+                  <Like
+                    liked={likedSet.has(book.title)}
+                    onClickToggle={() => onLike(book)}
+                  />
+                </td>
+                <td>
+                  <Link to={`/books/{book.title}`}>{book.title}</Link>
+                </td>
+                <td>{book.author}</td>
+                <td>{book.category}</td>
+                <td>
+                  <img src={`data:image/jpeg;base64,${book.image}`} />
+                </td>
+
+                <td>
+                  <button
+                    className="btn btn-danger btn-sm"
+                    onClick={() => onDelete(book)}
+                  >
+                    X
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+}
 
 BooksTable.propTypes = {
   onLike: PropTypes.func.isRequired,
