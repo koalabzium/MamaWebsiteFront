@@ -16,10 +16,11 @@ export class BooksView extends Component {
     currentPage: 1,
     sortColumn: {
       name: "title",
-      order: "asc"
+      order: "asc",
     },
     categories: [],
-    currentCategory: null
+    currentCategory: null,
+    categories_lookup: new Map(),
   };
 
   async componentDidMount() {
@@ -28,25 +29,28 @@ export class BooksView extends Component {
     const { data: categories } = await axios.get(url.url + "categories");
     this.setState({ books });
     this.setState({ categories });
+    var lookup = new Map();
+    categories.map((cat) => lookup.set(cat.id, cat.name));
+    this.setState({ categories_lookup: lookup });
     const liked =
       localStorage.getItem("likedBooks") === null
         ? []
         : JSON.parse(localStorage.getItem("likedBooks"));
     let likedSet = new Set();
-    liked.map(book => likedSet.add(book.title));
+    liked.map((book) => likedSet.add(book.title));
     this.setState({ liked, likedSet });
   }
 
-  handleDelete = book => {
+  handleDelete = (book) => {
     console.log("Deleting" + book);
   };
 
-  handleLike = book => {
+  handleLike = (book) => {
     let liked = this.state.liked;
     let likedSet = this.state.likedSet;
 
     if (likedSet.has(book.title)) {
-      liked = liked.filter(b => b.title !== book.title);
+      liked = liked.filter((b) => b.title !== book.title);
       likedSet.delete(book.title);
     } else {
       liked.push(book);
@@ -57,11 +61,11 @@ export class BooksView extends Component {
     localStorage.setItem("likedBooks", JSON.stringify(liked));
   };
 
-  handlePageChange = page => {
+  handlePageChange = (page) => {
     this.setState({ currentPage: page });
   };
 
-  handleSort = column => {
+  handleSort = (column) => {
     let sortColumn = this.state.sortColumn;
     if (sortColumn.name === column) {
       sortColumn.order = sortColumn.order === "asc" ? "desc" : "asc";
@@ -71,7 +75,7 @@ export class BooksView extends Component {
     this.setState({ sortColumn });
   };
 
-  handleFilter = category => {
+  handleFilter = (category) => {
     console.log(category);
     this.setState({ currentCategory: category });
   };
@@ -85,11 +89,12 @@ export class BooksView extends Component {
       currentPage,
       sortColumn,
       categories,
-      currentCategory
+      currentCategory,
+      categories_lookup,
     } = this.state;
     const filtered =
       currentCategory !== null
-        ? books.filter(book => book.category === currentCategory)
+        ? books.filter((book) => book.category === currentCategory)
         : books;
     const sorted = _.orderBy(filtered, [sortColumn.name], [sortColumn.order]);
     const slicedBooks = paginate(sorted, currentPage, pageSize);
@@ -106,6 +111,7 @@ export class BooksView extends Component {
 
         <BooksTable
           books={slicedBooks}
+          categories={categories_lookup}
           likedSet={likedSet}
           history={this.props.history}
           onLike={this.handleLike}

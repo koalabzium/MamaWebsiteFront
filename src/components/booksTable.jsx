@@ -2,14 +2,23 @@ import React, { Component } from "react";
 import Like from "./common/like";
 import { Link, Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
+import Categories from "./categories";
 
 class BooksTable extends Component {
   state = {
-    redirect: false
+    redirect: false,
   };
 
   render() {
-    const { books, likedSet, onLike, onDelete, onSort, history } = this.props;
+    const {
+      books,
+      likedSet,
+      onLike,
+      onDelete,
+      onSort,
+      history,
+      categories,
+    } = this.props;
 
     if (this.state.redirect) {
       return <Redirect to={this.state.redirect} />;
@@ -32,7 +41,7 @@ class BooksTable extends Component {
             </tr>
           </thead>
           <tbody>
-            {books.map(book => (
+            {books.map((book) => (
               <tr
                 className="clickable"
                 onClick={() => history.push(`/books/${book.title}`)}
@@ -48,7 +57,7 @@ class BooksTable extends Component {
                   <Link to={`/books/{book.title}`}>{book.title}</Link>
                 </td>
                 <td>{book.author}</td>
-                <td>{book.category}</td>
+                <td>{categories.get(book.category)}</td>
                 <td>
                   <img src={`data:image/jpeg;base64,${book.image}`} />
                 </td>
@@ -72,7 +81,7 @@ class BooksTable extends Component {
 
 BooksTable.propTypes = {
   onLike: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired
+  onDelete: PropTypes.func.isRequired,
 };
 
 export default BooksTable;
