@@ -30,11 +30,11 @@ class App extends Component {
               component={AdminPanel}
             ></Route>
             {/* <Route path={process.env.PUBLIC_URL + "/not-found"} component={NotFound}></Route> */}
-            <Redirect
+            {/* <Redirect
               from={process.env.PUBLIC_URL + "/"}
               exact
               to={process.env.PUBLIC_URL + "/books"}
-            />
+            /> */}
             {/* <Redirect to={process.env.PUBLIC_URL + "/not-found"} /> */}
           </Switch>
         </main>
