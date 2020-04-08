@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/MamaWebsiteFront/static/css/main.df705a8f.chunk.css",
+    "main.js": "/MamaWebsiteFront/static/js/main.a67d849b.chunk.js",
+    "main.js.map": "/MamaWebsiteFront/static/js/main.a67d849b.chunk.js.map",
+    "runtime-main.js": "/MamaWebsiteFront/static/js/runtime-main.362a35ca.js",
+    "runtime-main.js.map": "/MamaWebsiteFront/static/js/runtime-main.362a35ca.js.map",
+    "static/css/2.2990c7a7.chunk.css": "/MamaWebsiteFront/static/css/2.2990c7a7.chunk.css",
+    "static/js/2.50f09b6a.chunk.js": "/MamaWebsiteFront/static/js/2.50f09b6a.chunk.js",
+    "static/js/2.50f09b6a.chunk.js.map": "/MamaWebsiteFront/static/js/2.50f09b6a.chunk.js.map",
+    "index.html": "/MamaWebsiteFront/index.html",
+    "precache-manifest.a6a9d65e86b9f6e6eba6345cb6106c1c.js": "/MamaWebsiteFront/precache-manifest.a6a9d65e86b9f6e6eba6345cb6106c1c.js",
+    "service-worker.js": "/MamaWebsiteFront/service-worker.js",
+    "static/css/2.2990c7a7.chunk.css.map": "/MamaWebsiteFront/static/css/2.2990c7a7.chunk.css.map",
+    "static/css/main.df705a8f.chunk.css.map": "/MamaWebsiteFront/static/css/main.df705a8f.chunk.css.map",
+    "static/js/2.50f09b6a.chunk.js.LICENSE.txt": "/MamaWebsiteFront/static/js/2.50f09b6a.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.362a35ca.js",
+    "static/css/2.2990c7a7.chunk.css",
+    "static/js/2.50f09b6a.chunk.js",
+    "static/css/main.df705a8f.chunk.css",
+    "static/js/main.a67d849b.chunk.js"
+  ]
+}
