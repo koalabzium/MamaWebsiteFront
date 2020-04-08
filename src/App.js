@@ -33,7 +33,7 @@ class App extends Component {
             <Redirect
               from={process.env.PUBLIC_URL + "/"}
               exact
-              to={process.env.PUBLIC_URL / +"books"}
+              to={process.env.PUBLIC_URL + "/books"}
             />
             {/* <Redirect to={process.env.PUBLIC_URL + "/not-found"} /> */}
           </Switch>
