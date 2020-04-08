@@ -44,7 +44,9 @@ class BooksTable extends Component {
               <tr
                 className="clickable"
                 onClick={() =>
-                  history.push(`${process.env.PUBLIC_URL}/books/${book.title}`)
+                  history.replace(
+                    `${process.env.PUBLIC_URL}/#/books/${book.title}`
+                  )
                 }
                 key={book.title}
               >
