@@ -10,7 +10,7 @@ import BookDetails from "./components/bookDetails";
 class App extends Component {
   state = {};
   render() {
-    console.log("Pupa pupa", process.env.PUBLIC_URL);
+    console.log("Pupa pupa22222222222", process.env.PUBLIC_URL);
     return (
       <React.Fragment>
         <Navigation />
