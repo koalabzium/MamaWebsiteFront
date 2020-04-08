@@ -43,11 +43,12 @@ class BooksTable extends Component {
             {books.map((book) => (
               <tr
                 className="clickable"
-                onClick={() =>
-                  history.replace(
-                    `${process.env.PUBLIC_URL}/#/books/${book.title}`
-                  )
-                }
+                onClick={() => {
+                  const url = `${process.env.PUBLIC_URL}/#/books/${book.title}`;
+                  console.log(url);
+
+                  history.replace(url);
+                }}
                 key={book.title}
               >
                 <td>
