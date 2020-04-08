@@ -48,7 +48,7 @@ class BooksTable extends Component {
               <tr
                 className="clickable"
                 onClick={() => {
-                  const redirect = `books/${book.title}`;
+                  const redirect = `/books/${book.title}`;
                   console.log("uuuuuurlllllll ", redirect);
                   history.push(redirect);
                   this.setState({ redirect });

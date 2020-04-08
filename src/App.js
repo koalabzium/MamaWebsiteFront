@@ -21,7 +21,7 @@ class App extends Component {
             <Route path={"/admin"} component={AdminPanel}></Route>
             <Route path={"/not-found"} component={NotFound}></Route>
             <Redirect from={"/"} exact to={"/books"} />
-            {/* <Redirect to={"/not-found"} /> */}
+            <Redirect to={"/not-found"} />
           </Switch>
         </main>
       </React.Fragment>
