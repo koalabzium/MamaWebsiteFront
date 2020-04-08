@@ -20,7 +20,10 @@ class BooksTable extends Component {
     } = this.props;
 
     if (this.state.redirect) {
-      console.log("this.state.redirect", this.state.redirect);
+      console.log(
+        "-------------------->this.state.redirect",
+        this.state.redirect
+      );
       return <Redirect to={`/${this.state.redirect}`} />;
     }
     return (
@@ -46,8 +49,7 @@ class BooksTable extends Component {
                 className="clickable"
                 onClick={() => {
                   const redirect = `books/${book.title}`;
-                  console.log(redirect);
-                  console.log(history);
+                  console.log("uuuuuurlllllll ", redirect);
                   history.push(redirect);
                   this.setState({ redirect });
                 }}
