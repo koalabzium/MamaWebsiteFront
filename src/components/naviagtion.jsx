@@ -11,15 +11,10 @@ class Navigation extends Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link href={process.env.PUBLIC_URL + "/books"}>
-                Książki
-              </Nav.Link>
+              <Nav.Link href={"/books"}>Książki</Nav.Link>
             </Nav>
             <Form inline>
-              <Button
-                variant="outline-dark"
-                href={process.env.PUBLIC_URL + "/admin"}
-              >
+              <Button variant="outline-dark" href={"/admin"}>
                 Panel adminki
               </Button>
             </Form>

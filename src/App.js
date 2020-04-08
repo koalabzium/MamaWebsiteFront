@@ -16,26 +16,16 @@ class App extends Component {
         <Navigation />
         <main className="container m-3">
           <Switch>
-            <Route
-              path={process.env.PUBLIC_URL + "/books/:title"}
-              component={BookDetails}
-            ></Route>
-            <Route
-              path={process.env.PUBLIC_URL + "/books"}
-              exact
-              component={BooksView}
-            ></Route>
-            <Route
-              path={process.env.PUBLIC_URL + "/admin"}
-              component={AdminPanel}
-            ></Route>
-            {/* <Route path={process.env.PUBLIC_URL + "/not-found"} component={NotFound}></Route> */}
+            <Route path={"/books/:title"} component={BookDetails}></Route>
+            <Route path={"/books"} exact component={BooksView}></Route>
+            <Route path={"/admin"} component={AdminPanel}></Route>
+            {/* <Route path={"/not-found"} component={NotFound}></Route> */}
             {/* <Redirect
-              from={process.env.PUBLIC_URL + "/"}
+              from={"/"}
               exact
-              to={process.env.PUBLIC_URL + "/books"}
+              to={"/books"}
             /> */}
-            {/* <Redirect to={process.env.PUBLIC_URL + "/not-found"} /> */}
+            {/* <Redirect to={"/not-found"} /> */}
           </Switch>
         </main>
       </React.Fragment>
