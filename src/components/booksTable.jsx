@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import Like from "./common/like";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
-import Categories from "./categories";
 
 class BooksTable extends Component {
   state = {
@@ -53,9 +52,7 @@ class BooksTable extends Component {
                     onClickToggle={() => onLike(book)}
                   />
                 </td>
-                <td>
-                  <Link to={`/books/{book.title}`}>{book.title}</Link>
-                </td>
+                <td>{book.title}</td>
                 <td>{book.author}</td>
                 <td>{categories.get(book.category)}</td>
                 <td>

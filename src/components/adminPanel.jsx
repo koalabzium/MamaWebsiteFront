@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import LoginForm from "./loginForm";
+import AddBookForm from "./addBookForm";
 
 class AdminPanel extends Component {
   state = {
@@ -11,14 +12,15 @@ class AdminPanel extends Component {
   };
 
   render() {
-    if (!this.state.logged_in) return <LoginForm login={this.handleLogin} />;
-    else {
-      return (
-        <React.Fragment>
-          <h1>Witaj</h1>
-        </React.Fragment>
-      );
-    }
+    return <AddBookForm />;
+    // if (!this.state.logged_in) return <LoginForm login={this.handleLogin} />;
+    // else {
+    //   return (
+    //     <React.Fragment>
+    //       <h1>Witaj</h1>
+    //     </React.Fragment>
+    //   );
+    // }
   }
 }
 

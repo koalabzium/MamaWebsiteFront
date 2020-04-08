@@ -83,7 +83,7 @@ class LoginForm extends Component {
                   ></input>
                 </div>
                 <button type="submit" className="btn btn-primary">
-                  Loguj
+                  Zaloguj
                 </button>
               </form>
             </div>
