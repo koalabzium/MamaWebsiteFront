@@ -28,9 +28,9 @@ class App extends Component {
               path={process.env.PUBLIC_URL + "/admin"}
               component={AdminPanel}
             ></Route>
-            <Route path="/not-found" component={NotFound}></Route>
+            {/* <Route path={process.env.PUBLIC_URL + "/not-found"} component={NotFound}></Route>
             <Redirect from={process.env.PUBLIC_URL + "/"} exact to="/books" />
-            <Redirect to={process.env.PUBLIC_URL + "/not-found"} />
+            <Redirect to={process.env.PUBLIC_URL + "/not-found"} /> */}
           </Switch>
         </main>
       </React.Fragment>
