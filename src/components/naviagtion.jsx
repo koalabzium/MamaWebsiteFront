@@ -9,9 +9,7 @@ class Navigation extends Component {
     return (
       <React.Fragment>
         <Navbar sticky="top" bg="light" expand="lg">
-          <Navbar.Brand href={`${process.env.PUBLIC_URL}/#/`}>
-            Biblioteka
-          </Navbar.Brand>
+          <Navbar.Brand href={`/#/`}>Biblioteka</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">

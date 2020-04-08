@@ -20,7 +20,8 @@ class BooksTable extends Component {
     } = this.props;
 
     if (this.state.redirect) {
-      return <Redirect to={this.state.redirect} />;
+      console.log("this.state.redirect", this.state.redirect);
+      return <Redirect to={`/${this.state.redirect}`} />;
     }
     return (
       <div className="table-responsive">
@@ -44,10 +45,11 @@ class BooksTable extends Component {
               <tr
                 className="clickable"
                 onClick={() => {
-                  const url = `${process.env.PUBLIC_URL}/#/books/${book.title}`;
-                  console.log(url);
-
-                  history.replace(url);
+                  const redirect = `books/${book.title}`;
+                  console.log(redirect);
+                  console.log(history);
+                  history.push(redirect);
+                  this.setState({ redirect });
                 }}
                 key={book.title}
               >

@@ -19,12 +19,8 @@ class App extends Component {
             <Route path={"/books/:title"} component={BookDetails}></Route>
             <Route path={"/books"} exact component={BooksView}></Route>
             <Route path={"/admin"} component={AdminPanel}></Route>
-            {/* <Route path={"/not-found"} component={NotFound}></Route> */}
-            {/* <Redirect
-              from={"/"}
-              exact
-              to={"/books"}
-            /> */}
+            <Route path={"/not-found"} component={NotFound}></Route>
+            <Redirect from={"/"} exact to={"/books"} />
             {/* <Redirect to={"/not-found"} /> */}
           </Switch>
         </main>
