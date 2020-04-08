@@ -43,7 +43,9 @@ class BooksTable extends Component {
             {books.map((book) => (
               <tr
                 className="clickable"
-                onClick={() => history.push(`/books/${book.title}`)}
+                onClick={() =>
+                  history.push(`${process.env.PUBLIC_URL}/books/${book.title}`)
+                }
                 key={book.title}
               >
                 <td>
