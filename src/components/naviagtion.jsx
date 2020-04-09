@@ -4,7 +4,10 @@ import { Nav, Navbar, Form, FormControl, Button } from "react-bootstrap";
 
 class Navigation extends Component {
   render() {
-    console.log("NavBar# 16:54 nie wierze...: ", process.env.PUBLIC_URL);
+    console.log(
+      "Trying BrowserRouter with basename everywhere",
+      process.env.PUBLIC_URL
+    );
 
     return (
       <React.Fragment>
