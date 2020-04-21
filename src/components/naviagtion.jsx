@@ -4,8 +4,6 @@ import { Nav, Navbar, Form, FormControl, Button } from "react-bootstrap";
 
 class Navigation extends Component {
   render() {
-    console.log("HASHRouter with basename everywhere", process.env.PUBLIC_URL);
-
     return (
       <React.Fragment>
         <Navbar sticky="top" bg="light" expand="lg">
