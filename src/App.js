@@ -10,35 +10,27 @@ import BookDetails from "./components/bookDetails";
 class App extends Component {
   state = {};
   render() {
-    console.log("Pupa pupa22222222222", process.env.PUBLIC_URL);
     return (
       <React.Fragment>
         <Navigation />
         <main className="container m-3">
           <Switch>
             <Route
-              path={`${process.env.PUBLIC_URL}/books/:title`}
+              path={process.env.PUBLIC_URL + "/books/:title"}
               component={BookDetails}
             ></Route>
             <Route
-              path={`${process.env.PUBLIC_URL}/books`}
+              path={process.env.PUBLIC_URL + "/books"}
               exact
               component={BooksView}
             ></Route>
             <Route
-              path={`${process.env.PUBLIC_URL}/admin`}
+              path={process.env.PUBLIC_URL + "/admin"}
               component={AdminPanel}
             ></Route>
-            <Route
-              path={`${process.env.PUBLIC_URL}/not-found`}
-              component={NotFound}
-            ></Route>
-            <Redirect
-              from={`${process.env.PUBLIC_URL}/`}
-              exact
-              to={`${process.env.PUBLIC_URL}/books`}
-            />
-            <Redirect to={`${process.env.PUBLIC_URL}/not-found`} />
+            <Route path="/not-found" component={NotFound}></Route>
+            <Redirect from={process.env.PUBLIC_URL + "/"} exact to="/books" />
+            <Redirect to={process.env.PUBLIC_URL + "/not-found"} />
           </Switch>
         </main>
       </React.Fragment>
