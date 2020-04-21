@@ -10,6 +10,8 @@ import BookDetails from "./components/bookDetails";
 class App extends Component {
   state = {};
   render() {
+    console.log(`OBECNY LINK ${process.env.PUBLIC_URL}`);
+
     return (
       <React.Fragment>
         <Navigation />
