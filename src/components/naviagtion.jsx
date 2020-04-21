@@ -9,13 +9,19 @@ class Navigation extends Component {
     return (
       <React.Fragment>
         <Navbar sticky="top" bg="light" expand="lg">
-          <Navbar.Brand href={`${process.env.PUBLIC_URL}/`}>
+          <Navbar.Brand
+            href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
+            href={`${process.env.PUBLIC_URL}/`}
+          >
             Biblioteka
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              <Nav.Link href={`${process.env.PUBLIC_URL}/books`}>
+              <Nav.Link
+                href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
+                // href={`${process.env.PUBLIC_URL}/books`}
+              >
                 Książki
               </Nav.Link>
             </Nav>
