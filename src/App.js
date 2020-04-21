@@ -10,6 +10,8 @@ import BookDetails from "./components/bookDetails";
 class App extends Component {
   state = {};
   render() {
+    console.log("Trying to have...");
+
     return (
       <React.Fragment>
         <Navigation />
