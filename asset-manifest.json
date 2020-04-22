@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/MamaWebsiteFront/static/css/main.df705a8f.chunk.css",
-    "main.js": "/MamaWebsiteFront/static/js/main.ad70ffc7.chunk.js",
-    "main.js.map": "/MamaWebsiteFront/static/js/main.ad70ffc7.chunk.js.map",
+    "main.js": "/MamaWebsiteFront/static/js/main.1df3dccc.chunk.js",
+    "main.js.map": "/MamaWebsiteFront/static/js/main.1df3dccc.chunk.js.map",
     "runtime-main.js": "/MamaWebsiteFront/static/js/runtime-main.362a35ca.js",
     "runtime-main.js.map": "/MamaWebsiteFront/static/js/runtime-main.362a35ca.js.map",
     "static/css/2.2990c7a7.chunk.css": "/MamaWebsiteFront/static/css/2.2990c7a7.chunk.css",
     "static/js/2.3110de8e.chunk.js": "/MamaWebsiteFront/static/js/2.3110de8e.chunk.js",
     "static/js/2.3110de8e.chunk.js.map": "/MamaWebsiteFront/static/js/2.3110de8e.chunk.js.map",
     "index.html": "/MamaWebsiteFront/index.html",
-    "precache-manifest.da9ced8ce30c398a5841c0c29f69b0de.js": "/MamaWebsiteFront/precache-manifest.da9ced8ce30c398a5841c0c29f69b0de.js",
+    "precache-manifest.1487c841b424f796e9d9be637976cb13.js": "/MamaWebsiteFront/precache-manifest.1487c841b424f796e9d9be637976cb13.js",
     "service-worker.js": "/MamaWebsiteFront/service-worker.js",
     "static/css/2.2990c7a7.chunk.css.map": "/MamaWebsiteFront/static/css/2.2990c7a7.chunk.css.map",
     "static/css/main.df705a8f.chunk.css.map": "/MamaWebsiteFront/static/css/main.df705a8f.chunk.css.map",
@@ -20,6 +20,6 @@
     "static/css/2.2990c7a7.chunk.css",
     "static/js/2.3110de8e.chunk.js",
     "static/css/main.df705a8f.chunk.css",
-    "static/js/main.ad70ffc7.chunk.js"
+    "static/js/main.1df3dccc.chunk.js"
   ]
 }
