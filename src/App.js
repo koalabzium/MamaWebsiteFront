@@ -19,12 +19,12 @@ class App extends Component {
           <Switch>
             <Route
               // path={`https://koalabzium.github.io/MamaWebsiteFront/books/:title`}
-              path={`${process.env.PUBLIC_URL}/books/:title`}
+              path={`${process.env.PUBLIC_URL}/#/books/:title`}
               component={BookDetails}
             ></Route>
             <Route
               // path={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-              path={`${process.env.PUBLIC_URL}/books`}
+              path={`${process.env.PUBLIC_URL}/#/books`}
               exact
               component={BooksView}
             ></Route>
