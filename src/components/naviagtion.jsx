@@ -8,7 +8,7 @@ class Navigation extends Component {
       <React.Fragment>
         <Navbar sticky="top" bg="light" expand="lg">
           <Navbar.Brand
-            href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
+            // href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
             href={`${process.env.PUBLIC_URL}/`}
           >
             Biblioteka
@@ -17,8 +17,8 @@ class Navigation extends Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               <Nav.Link
-                href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-                // href={`${process.env.PUBLIC_URL}/books`}
+                // href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
+                href={`${process.env.PUBLIC_URL}/books`}
               >
                 Książki
               </Nav.Link>

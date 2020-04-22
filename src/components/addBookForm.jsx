@@ -6,6 +6,10 @@ class AddBookForm extends Component {
     categories: [],
   };
 
+  handleFileSelect = (e) => {
+    console.log(e.target.files[0]);
+  };
+
   handleAdd = (e) => {
     e.preventDefault();
     console.log("DODAWANKO");
@@ -57,7 +61,11 @@ class AddBookForm extends Component {
           </div>
           <div className="form-group">
             <label>Zdjęcie okładki</label>
-            <input type="file" className="form-control-file"></input>
+            <input
+              type="file"
+              onChange={this.handleFileSelect}
+              className="form-control-file"
+            ></input>
           </div>
           <button type="submit" className="btn btn-primary">
             Dodaj
