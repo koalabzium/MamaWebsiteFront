@@ -19,28 +19,18 @@ class App extends Component {
           <Switch>
             <Route
               // path={`https://koalabzium.github.io/MamaWebsiteFront/books/:title`}
-              path={`${process.env.PUBLIC_URL}/#/books/:title`}
+              path={`/books/:title`}
               component={BookDetails}
             ></Route>
             <Route
               // path={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-              path={`${process.env.PUBLIC_URL}/#/books`}
+              path={`/books`}
               exact
               component={BooksView}
             ></Route>
-            <Route
-              path={`${process.env.PUBLIC_URL}/admin`}
-              component={AdminPanel}
-            ></Route>
-            <Route
-              path={`${process.env.PUBLIC_URL}/not-found`}
-              component={NotFound}
-            ></Route>
-            <Redirect
-              from={`${process.env.PUBLIC_URL}/`}
-              exact
-              to={`${process.env.PUBLIC_URL}/books`}
-            />
+            <Route path={`/admin`} component={AdminPanel}></Route>
+            <Route path={`/not-found`} component={NotFound}></Route>
+            <Redirect from={`/`} exact to={`/books`} />
             {/* <Redirect to={`${process.env.PUBLIC_URL}/not-found`} /> */}
           </Switch>
         </main>

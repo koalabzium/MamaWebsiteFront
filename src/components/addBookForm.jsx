@@ -1,18 +1,24 @@
 import React, { Component } from "react";
 import axios from "axios";
+import ImageUpload from "./common/imageUpload";
 
 class AddBookForm extends Component {
   state = {
     categories: [],
-  };
-
-  handleFileSelect = (e) => {
-    console.log(e.target.files[0]);
+    image: null,
   };
 
   handleAdd = (e) => {
     e.preventDefault();
-    console.log("DODAWANKO");
+    console.log("DODAWANKO2");
+  };
+
+  handlePictureCrop = (image) => {
+    this.setState({ image });
+  };
+
+  handleAddCategory = () => {
+    console.log("Dodawanie kategorii");
   };
 
   async componentDidMount() {
@@ -47,12 +53,14 @@ class AddBookForm extends Component {
             <input className="form-control"></input>
           </div>
           <div className="form-group">
-            <label htmlFor="exampleFormControlSelect1">Example select</label>
+            <label htmlFor="exampleFormControlSelect1">Wybierz kategorię</label>
             <select className="form-control" id="exampleFormControlSelect1">
               {categories.map((category) => (
                 <option key={category.id}>{category.name}</option>
               ))}
-              <option>Dodaj kategorię...</option>
+              <option className="clickable" onClick={this.handleAddCategory}>
+                <a href="www.google.com">Dodaj kategorię...</a>
+              </option>
             </select>
           </div>
           <div className="form-group">
@@ -61,11 +69,8 @@ class AddBookForm extends Component {
           </div>
           <div className="form-group">
             <label>Zdjęcie okładki</label>
-            <input
-              type="file"
-              onChange={this.handleFileSelect}
-              className="form-control-file"
-            ></input>
+
+            <ImageUpload submitCrop={this.handlePictureCrop} />
           </div>
           <button type="submit" className="btn btn-primary">
             Dodaj

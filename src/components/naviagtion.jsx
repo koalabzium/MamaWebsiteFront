@@ -9,7 +9,7 @@ class Navigation extends Component {
         <Navbar sticky="top" bg="light" expand="lg">
           <Navbar.Brand
             // href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-            href={`${process.env.PUBLIC_URL}/`}
+            href={`/`}
           >
             Biblioteka
           </Navbar.Brand>
@@ -18,16 +18,13 @@ class Navigation extends Component {
             <Nav className="mr-auto">
               <Nav.Link
                 // href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-                href={`${process.env.PUBLIC_URL}/#/books`}
+                href={`/books`}
               >
                 Książki
               </Nav.Link>
             </Nav>
             <Form inline>
-              <Button
-                variant="outline-dark"
-                href={`${process.env.PUBLIC_URL}/admin`}
-              >
+              <Button variant="outline-dark" href={`/admin`}>
                 Panel adminki
               </Button>
             </Form>

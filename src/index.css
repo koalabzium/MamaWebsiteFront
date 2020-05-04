@@ -16,3 +16,10 @@ img {
 .clickable {
   cursor: pointer;
 }
+
+.dropzone {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  color: rgb(82, 80, 80);
+}
