@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React from "react";
 
-const BookDetails = props => {
+const BookDetails = (props) => {
   return <h2>Szczegóły {props.match.params.title}</h2>;
 };
 

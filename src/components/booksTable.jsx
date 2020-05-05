@@ -44,7 +44,7 @@ class BooksTable extends Component {
               <tr
                 className="clickable"
                 onClick={() => {
-                  const redirect = `${process.env.PUBLIC_URL}/books/${book.title}`;
+                  const redirect = `/books/${book.title}`;
                   history.push(redirect);
                   this.setState({ redirect });
                 }}

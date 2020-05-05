@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import LoginForm from "./loginForm";
+// import LoginForm from "./loginForm";
 import AddBookForm from "./addBookForm";
 
 class AdminPanel extends Component {
@@ -12,7 +12,12 @@ class AdminPanel extends Component {
   };
 
   render() {
-    return <AddBookForm />;
+    return (
+      <AddBookForm
+        bookTitle="Duma i uprzedzenie"
+        history={this.props.history}
+      />
+    );
     // if (!this.state.logged_in) return <LoginForm login={this.handleLogin} />;
     // else {
     //   return (

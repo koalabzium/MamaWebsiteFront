@@ -11,7 +11,7 @@ const acceptedFileTypesArray = acceptedFileTypes.split(",").map((item) => {
 
 class ImageUpload extends Component {
   state = {
-    imgSrc: null,
+    image: this.props.image,
     crop: {
       aspect: 0.7,
       minWidth: 300,
@@ -29,6 +29,11 @@ class ImageUpload extends Component {
       wigth: 50,
     },
   };
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ image: nextProps.image });
+    console.log("nextProps.image", nextProps);
+  }
 
   verifyFile = (files) => {
     if (files && files.length > 0) {
@@ -54,11 +59,11 @@ class ImageUpload extends Component {
     }
   };
 
-  handleCrop = () => {
-    this.getCroppedImg(this.state.imgSrc, this.state.pixelCrop)
+  handleCrop = (e) => {
+    e.preventDefault();
+    this.getCroppedImg(this.state.image, this.state.pixelCrop)
       .then((pic) => {
-        console.log("cropped pic: ", pic);
-        this.setState({ imgSrc: pic });
+        this.setState({ image: pic });
         this.setState({ pixelCrop: null });
         this.setState({
           crop: {
@@ -86,7 +91,7 @@ class ImageUpload extends Component {
         const myFileItemReader = new FileReader();
         myFileItemReader.addEventListener("load", () => {
           const result = myFileItemReader.result;
-          this.setState({ imgSrc: result });
+          this.setState({ image: result });
         });
         myFileItemReader.readAsDataURL(currentFile);
       }
@@ -135,10 +140,10 @@ class ImageUpload extends Component {
   render() {
     return (
       <div>
-        {this.state.imgSrc ? (
+        {this.state.image ? (
           <div>
             <ReactCrop
-              src={this.state.imgSrc}
+              src={this.state.image}
               crop={this.state.crop}
               onComplete={(e, crop) => {
                 this.setState({ pixelCrop: crop });
@@ -149,12 +154,16 @@ class ImageUpload extends Component {
             <div>
               <button
                 className="btn btn-danger"
-                onClick={() => this.setState({ imgSrc: null })}
+                onClick={() => this.setState({ image: null })}
               >
                 Zmień zdjęcie
               </button>
-              <button className="btn btn-danger" onClick={this.handleCrop}>
-                CROPP
+              <button
+                className="btn btn-danger"
+                style={{ marginLeft: 20 }}
+                onClick={this.handleCrop}
+              >
+                Przytnij
               </button>
             </div>
           </div>
