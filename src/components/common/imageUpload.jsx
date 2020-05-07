@@ -32,7 +32,6 @@ class ImageUpload extends Component {
 
   componentWillReceiveProps(nextProps) {
     this.setState({ image: nextProps.image });
-    console.log("nextProps.image", nextProps);
   }
 
   verifyFile = (files) => {
@@ -127,7 +126,6 @@ class ImageUpload extends Component {
           );
 
           const base64Image = canvas.toDataURL("image/jpeg");
-          console.log(base64Image);
           resolve(base64Image);
         };
       } catch (e) {

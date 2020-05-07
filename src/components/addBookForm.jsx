@@ -14,20 +14,68 @@ class AddBookForm extends Component {
     quantity: 1,
     link: "",
     location: "",
-    categoryId: "",
+    categoryId: "1584616466602349",
+    errors: null,
   };
 
   //UWAGA pamiętaj, żeby przy edytowaniu zrobić faktycznie edytowanie...
+
+  validateForm = () => {
+    const { image, title, author, description, quantity, link } = this.state;
+
+    //CZY ZDJĘCIE ODPOWIEDZNICH ROZMIARÓW?
+
+    if (
+      image === null ||
+      title === "" ||
+      author === "" ||
+      description === "" ||
+      quantity === "" ||
+      link === ""
+    ) {
+      return true;
+    }
+
+    return false;
+  };
 
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
   handleSubmit = (e) => {
+    const {
+      image,
+      title,
+      author,
+      description,
+      quantity,
+      link,
+      location,
+      categoryId,
+    } = this.state;
     e.preventDefault();
-    console.log("DODAWANKO2");
-    //sprawadz czy dobry obrazek
-    // this.props.history.push(`/books`);
+    const url = require("../apiURL.json");
+    const post_url = url.url + "books";
+    axios({
+      method: "post",
+      url: post_url,
+      headers: {},
+      data: {
+        image,
+        title,
+        author,
+        description,
+        quantity,
+        link,
+        location,
+        category: categoryId,
+      },
+    }).then((res) => {
+      console.log(res);
+    });
+
+    this.props.history.push(`/books`);
   };
 
   handlePictureCrop = (image) => {
@@ -51,8 +99,6 @@ class AddBookForm extends Component {
 
   async componentDidMount() {
     const url = require("../apiURL.json");
-    const { data: categories } = await axios.get(url.url + "categories");
-    this.setState({ categories });
     if (this.props.bookTitle) {
       try {
         const editedBook = await axios.get(
@@ -60,7 +106,6 @@ class AddBookForm extends Component {
         );
 
         if (!editedBook) {
-          console.log("null");
           return this.props.history.replace("/not-found");
         } else {
           this.modifyStateWithEditedBook(editedBook.data);
@@ -68,48 +113,58 @@ class AddBookForm extends Component {
       } catch (error) {
         console.log(error);
       }
-    } else {
-      console.log("Nie ma bookID");
     }
+    const { data: categories } = await axios.get(url.url + "categories");
+    this.setState({ categories });
   }
 
   render() {
-    const { categories } = this.state;
+    const {
+      categories,
+      image,
+      title,
+      author,
+      description,
+      quantity,
+      link,
+      location,
+      categoryId,
+    } = this.state;
     return (
       <React.Fragment>
-        <form class="needs-validation" novalidate onSubmit={this.handleSubmit}>
+        <form onSubmit={this.handleSubmit} noValidate>
           <Input
             label="Tytuł"
             name="title"
-            value={this.state.title}
+            value={title}
             onChange={this.handleChange}
             type=""
           />
           <Input
             label="Autor(ka)"
             name="author"
-            value={this.state.author}
+            value={author}
             onChange={this.handleChange}
             type=""
           />
           <Input
             label="Link"
             name="link"
-            value={this.state.link}
+            value={link}
             onChange={this.handleChange}
             type=""
           />
           <Input
             label="Lokalizacja"
             name="location"
-            value={this.state.location}
+            value={location}
             onChange={this.handleChange}
             type=""
           />
           <Input
             label="Ilość egzemplarzy"
             name="quantity"
-            value={this.state.quantity}
+            value={quantity}
             onChange={this.handleChange}
             type="number"
           />
@@ -121,8 +176,8 @@ class AddBookForm extends Component {
               </button>
             </label>
             <select
-              value={this.state.category}
-              name="category"
+              value={categoryId}
+              name="categoryId"
               onChange={this.handleChange}
               className="form-control"
               id="exampleFormControlSelect1"
@@ -140,19 +195,30 @@ class AddBookForm extends Component {
               className="form-control"
               rows="3"
               name="description"
-              value={this.state.description}
+              value={description}
               onChange={this.handleChange}
             ></textarea>
           </div>
           <div className="form-group">
             <label>Zdjęcie okładki</label>
 
-            <ImageUpload
-              submitCrop={this.handlePictureCrop}
-              image={this.state.image}
-            />
+            <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
           </div>
-          <button type="submit" className="btn btn-primary">
+          {this.validateForm() ? (
+            <div className="alert alert-danger" role="alert">
+              Wypełnij wszystkie pola i przytnij zdjęcie, przed zaakceptowaniem
+              książki.{" "}
+            </div>
+          ) : (
+            <div className="alert alert-success" role="alert">
+              Gotowe :)
+            </div>
+          )}
+          <button
+            disabled={this.validateForm()}
+            type="submit"
+            className="btn btn-primary"
+          >
             Dodaj
           </button>
         </form>

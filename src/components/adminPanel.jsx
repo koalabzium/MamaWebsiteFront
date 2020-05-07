@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 // import LoginForm from "./loginForm";
 import AddBookForm from "./addBookForm";
+import LoginForm from "./loginForm";
 
 class AdminPanel extends Component {
   state = {
@@ -13,10 +14,16 @@ class AdminPanel extends Component {
 
   render() {
     return (
-      <AddBookForm
-        bookTitle="Duma i uprzedzenie"
-        history={this.props.history}
-      />
+      <div>
+        {this.state.logged_in ? (
+          <AddBookForm
+            bookTitle="Duma i uprzedzenie"
+            history={this.props.history}
+          />
+        ) : (
+          <LoginForm />
+        )}
+      </div>
     );
     // if (!this.state.logged_in) return <LoginForm login={this.handleLogin} />;
     // else {

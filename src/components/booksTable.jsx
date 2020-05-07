@@ -60,7 +60,7 @@ class BooksTable extends Component {
                 <td>{book.author}</td>
                 <td>{categories.get(book.category)}</td>
                 <td>
-                  <img src={`data:image/jpeg;base64,${book.image}`} />
+                  <img src={`${book.image}`} />
                 </td>
 
                 <td>
