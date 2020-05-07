@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import ImageUpload from "./common/imageUpload";
 import Input from "./common/input";
+import { getCategories } from "../services/categoryService";
 
 class AddBookForm extends Component {
   state = {
@@ -114,7 +115,7 @@ class AddBookForm extends Component {
         console.log(error);
       }
     }
-    const { data: categories } = await axios.get(url.url + "categories");
+    const { data: categories } = await getCategories();
     this.setState({ categories });
   }
 

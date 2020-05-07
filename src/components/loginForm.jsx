@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { login } from "../services/loginService";
 
 class LoginForm extends Component {
   state = {
@@ -31,7 +32,7 @@ class LoginForm extends Component {
       this.setState({ errors });
       return;
     }
-    this.props.login();
+    login(this.state.account.username, this.state.account.password);
   };
 
   handleChange = (e) => {

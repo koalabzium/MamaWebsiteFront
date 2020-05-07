@@ -6,6 +6,8 @@ import BooksTable from "./booksTable";
 import LikedBooks from "./likedBooks";
 import _ from "lodash";
 import Categories from "./categories";
+import { getBooks } from "../services/bookService";
+import { getCategories } from "../services/categoryService";
 
 export class BooksView extends Component {
   state = {
@@ -24,21 +26,21 @@ export class BooksView extends Component {
   };
 
   async componentDidMount() {
-    const url = require("../apiURL.json");
-    const { data: books } = await axios.get(url.url + "books");
-    const { data: categories } = await axios.get(url.url + "categories");
-    this.setState({ books });
-    this.setState({ categories });
+    const books = await getBooks();
+    this.setState({ books: books.data });
+    const categories = await getCategories();
+    this.setState({ categories: categories.data });
+
     var lookup = new Map();
-    categories.map((cat) => lookup.set(cat.id, cat.name));
+    categories.data.map((cat) => lookup.set(cat.id, cat.name));
     this.setState({ categories_lookup: lookup });
-    const liked =
-      localStorage.getItem("likedBooks") === null
-        ? []
-        : JSON.parse(localStorage.getItem("likedBooks"));
-    let likedSet = new Set();
-    liked.map((book) => likedSet.add(book.title));
-    this.setState({ liked, likedSet });
+    // const liked =
+    //   localStorage.getItem("likedBooks") === null
+    //     ? []
+    //     : JSON.parse(localStorage.getItem("likedBooks"));
+    // let likedSet = new Set();
+    // liked.map((book) => likedSet.add(book.title));
+    // this.setState({ liked, likedSet });
   }
 
   handleDelete = (book) => {

@@ -25,14 +25,6 @@ class AdminPanel extends Component {
         )}
       </div>
     );
-    // if (!this.state.logged_in) return <LoginForm login={this.handleLogin} />;
-    // else {
-    //   return (
-    //     <React.Fragment>
-    //       <h1>Witaj</h1>
-    //     </React.Fragment>
-    //   );
-    // }
   }
 }
 
