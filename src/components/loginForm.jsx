@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { login } from "../services/loginService";
+import axios from "axios";
 
 class LoginForm extends Component {
   state = {
@@ -25,14 +26,27 @@ class LoginForm extends Component {
     return errors.length === 0 ? null : errors;
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     const errors = this.validate();
     if (errors != null) {
       this.setState({ errors });
       return;
     }
-    login(this.state.account.username, this.state.account.password);
+    try {
+      const { data: jwt } = await login(
+        this.state.account.username,
+        this.state.account.password
+      );
+      localStorage.setItem("token", jwt.token);
+      this.setState({ errors: null });
+      this.props.handleLogin();
+    } catch (e) {
+      console.log(e);
+      const errors = [];
+      errors.push("Zły login lub hasło :(");
+      this.setState({ errors });
+    }
   };
 
   handleChange = (e) => {

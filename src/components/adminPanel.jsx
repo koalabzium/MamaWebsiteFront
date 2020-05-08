@@ -8,20 +8,39 @@ class AdminPanel extends Component {
     logged_in: false,
   };
 
+  componentDidMount() {
+    const jwt = localStorage.getItem("token");
+    if (jwt) {
+      this.setState({ logged_in: true });
+    } else {
+      this.setState({ logged_in: false });
+    }
+  }
+
   handleLogin = () => {
     this.setState({ logged_in: true });
+  };
+
+  handleLogout = () => {
+    localStorage.removeItem("token");
+    this.setState({ logged_in: false });
   };
 
   render() {
     return (
       <div>
         {this.state.logged_in ? (
-          <AddBookForm
-            bookTitle="Duma i uprzedzenie"
-            history={this.props.history}
-          />
+          <div>
+            <h1>Witaj Marysiu!</h1>
+            <button onClick={this.handleLogout} className="btn btn-primary">
+              Wyloguj się
+            </button>
+          </div>
         ) : (
-          <LoginForm />
+          <LoginForm
+            history={this.props.history}
+            handleLogin={this.handleLogin}
+          />
         )}
       </div>
     );

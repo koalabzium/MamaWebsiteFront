@@ -4,7 +4,7 @@ import axios from "axios";
 const apiEndpoint = url + "login";
 
 export function login(name, password) {
-  axios({
+  return axios({
     method: "post",
     url: apiEndpoint,
     headers: {},
@@ -12,8 +12,5 @@ export function login(name, password) {
       name,
       password,
     },
-  }).then((res) => {
-    console.log(res);
-    return res;
   });
 }
