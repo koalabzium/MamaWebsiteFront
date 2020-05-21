@@ -1,7 +1,6 @@
-import { url } from "../apiURL.json";
 import axios from "axios";
 
-const apiEndpoint = url + "categories";
+const apiEndpoint = process.env.API_URL + "categories";
 
 export function getCategories() {
   return axios.get(apiEndpoint);

@@ -18,19 +18,8 @@ class App extends Component {
         <Navigation />
         <main className="container m-3">
           <Switch>
-            <Route
-              // path={`https://koalabzium.github.io/MamaWebsiteFront/books/:title`}
-              path={`/books/:title`}
-              component={BookDetails}
-            ></Route>
-            <Route
-              // path={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-              path={`/books`}
-              exact
-              component={BooksView}
-            ></Route>
+            <Route path={`/books`} exact component={BooksView}></Route>
             <Route path={`/admin`} component={AdminPanel}></Route>
-            <Route path={`/edit/:title`} component={UpdateBook}></Route>
 
             <Route path={`/not-found`} component={NotFound}></Route>
             <Redirect from={`/`} exact to={`/books`} />

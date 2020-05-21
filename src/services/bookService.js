@@ -1,7 +1,6 @@
-import { url } from "../apiURL.json";
 import axios from "axios";
 
-const apiEndpoint = url + "books/";
+const apiEndpoint = process.env.API_URL + "books/";
 
 export function getBooks() {
   return axios.get(apiEndpoint);

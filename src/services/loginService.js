@@ -1,7 +1,6 @@
-import { url } from "../apiURL.json";
 import axios from "axios";
 
-const apiEndpoint = url + "login";
+const apiEndpoint = process.env.API_URL + "login";
 
 export function login(name, password) {
   return axios({
