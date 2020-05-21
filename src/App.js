@@ -6,13 +6,13 @@ import Navigation from "./components/naviagtion";
 import AdminPanel from "./components/adminPanel";
 import NotFound from "./components/notFound";
 import BookDetails from "./components/bookDetails";
+import AddBook from "./components/addBook";
+import UpdateBook from "./components/updateBook";
 
 class App extends Component {
   state = {};
 
   render() {
-    console.log(`OBECNY LINK 2 ${process.env.PUBLIC_URL}`);
-
     return (
       <React.Fragment>
         <Navigation />
@@ -30,9 +30,11 @@ class App extends Component {
               component={BooksView}
             ></Route>
             <Route path={`/admin`} component={AdminPanel}></Route>
+            <Route path={`/edit/:title`} component={UpdateBook}></Route>
+
             <Route path={`/not-found`} component={NotFound}></Route>
             <Redirect from={`/`} exact to={`/books`} />
-            {/* <Redirect to={`${process.env.PUBLIC_URL}/not-found`} /> */}
+            <Redirect to={`/not-found`} />
           </Switch>
         </main>
       </React.Fragment>

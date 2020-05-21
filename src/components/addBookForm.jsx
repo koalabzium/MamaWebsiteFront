@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import axios from "axios";
+import { addBook, editBook } from "../services/bookService";
 import ImageUpload from "./common/imageUpload";
 import Input from "./common/input";
 import { getCategories } from "../services/categoryService";
+import { PropTypes } from "prop-types";
 
 class AddBookForm extends Component {
   state = {
@@ -15,19 +16,30 @@ class AddBookForm extends Component {
     quantity: 1,
     link: "",
     location: "",
+    id: "",
     categoryId: "1584616466602349",
     errors: null,
+    editing: false,
+    addingCategory: false,
   };
 
   //UWAGA pamiętaj, żeby przy edytowaniu zrobić faktycznie edytowanie...
 
   validateForm = () => {
-    const { image, title, author, description, quantity, link } = this.state;
+    const {
+      image,
+      title,
+      author,
+      description,
+      quantity,
+      link,
+      editing,
+    } = this.state;
 
     //CZY ZDJĘCIE ODPOWIEDZNICH ROZMIARÓW?
 
     if (
-      image === null ||
+      (image === null && editing === false) ||
       title === "" ||
       author === "" ||
       description === "" ||
@@ -54,29 +66,35 @@ class AddBookForm extends Component {
       link,
       location,
       categoryId,
+      editing,
+      available,
+      id,
     } = this.state;
     e.preventDefault();
-    const url = require("../apiURL.json");
-    const post_url = url.url + "books";
-    axios({
-      method: "post",
-      url: post_url,
-      headers: {},
-      data: {
-        image,
-        title,
-        author,
-        description,
-        quantity,
-        link,
-        location,
-        category: categoryId,
-      },
-    }).then((res) => {
-      console.log(res);
-    });
-
-    this.props.history.push(`/books`);
+    const editedBook = {
+      title,
+      author,
+      description,
+      quantity,
+      link,
+      location,
+      category: categoryId,
+      available,
+      id,
+    };
+    if (editing) {
+      this.props.onDoneEdit({ ...editedBook, image });
+      editBook(editedBook).then((res) => {
+        console.log("edited, ", res);
+      });
+      console.log("editing");
+    } else {
+      console.log("Dodawaaanieee");
+      addBook({ ...editedBook, image }).then((res) => {
+        console.log(res);
+        this.props.onDoneAdd(res.data.message);
+      });
+    }
   };
 
   handlePictureCrop = (image) => {
@@ -84,36 +102,33 @@ class AddBookForm extends Component {
   };
 
   handleAddCategory = () => {
+    this.setState({ addingCategory: true });
     console.log("Dodawanie kategorii");
   };
 
+  componentWillReceiveProps(nextProps) {
+    this.modifyStateWithEditedBook(nextProps.book);
+  }
+
   modifyStateWithEditedBook = (book) => {
-    this.setState({ title: book.title });
-    this.setState({ author: book.author });
-    this.setState({ categoryId: book.category });
-    this.setState({ link: book.link });
-    this.setState({ location: book.location });
-    this.setState({ description: book.description });
-    this.setState({ quantity: book.quantity });
-    this.setState({ image: "data:image/jpeg;base64," + book.image });
+    if (book) {
+      this.setState({ title: book.title });
+      this.setState({ author: book.author });
+      this.setState({ categoryId: book.category });
+      this.setState({ link: book.link });
+      this.setState({ location: book.location });
+      this.setState({ description: book.description });
+      this.setState({ quantity: book.quantity });
+      this.setState({ image: book.image });
+      this.setState({ id: book.id });
+      this.setState({ available: book.available });
+    }
   };
 
   async componentDidMount() {
-    const url = require("../apiURL.json");
-    if (this.props.bookTitle) {
-      try {
-        const editedBook = await axios.get(
-          url.url + "books/" + this.props.bookTitle
-        );
-
-        if (!editedBook) {
-          return this.props.history.replace("/not-found");
-        } else {
-          this.modifyStateWithEditedBook(editedBook.data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+    if (this.props.book) {
+      this.setState({ editing: true });
+      this.modifyStateWithEditedBook(this.props.book);
     }
     const { data: categories } = await getCategories();
     this.setState({ categories });
@@ -130,6 +145,8 @@ class AddBookForm extends Component {
       link,
       location,
       categoryId,
+      editing,
+      addingCategory,
     } = this.state;
     return (
       <React.Fragment>
@@ -170,12 +187,7 @@ class AddBookForm extends Component {
             type="number"
           />
           <div className="form-group">
-            <label htmlFor="exampleFormControlSelect1">
-              Wybierz kategorię lub{" "}
-              <button className="clickable" onClick={this.handleAddCategory}>
-                dodaj nową.
-              </button>
-            </label>
+            <label htmlFor="exampleFormControlSelect1">Wybierz kategorię</label>
             <select
               value={categoryId}
               name="categoryId"
@@ -200,11 +212,14 @@ class AddBookForm extends Component {
               onChange={this.handleChange}
             ></textarea>
           </div>
-          <div className="form-group">
-            <label>Zdjęcie okładki</label>
+          {editing ? null : (
+            <div className="form-group">
+              <label>Zdjęcie okładki</label>
 
-            <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
-          </div>
+              <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
+            </div>
+          )}
+
           {this.validateForm() ? (
             <div className="alert alert-danger" role="alert">
               Wypełnij wszystkie pola i przytnij zdjęcie, przed zaakceptowaniem
@@ -220,7 +235,7 @@ class AddBookForm extends Component {
             type="submit"
             className="btn btn-primary"
           >
-            Dodaj
+            Zatwierdź
           </button>
         </form>
       </React.Fragment>
