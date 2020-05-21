@@ -7,6 +7,8 @@ import * as serviceWorker from "./serviceWorker";
 import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+console.log(process.env);
+
 ReactDOM.render(
   <BrowserRouter
   // basename={process.env.PUBLIC_URL}

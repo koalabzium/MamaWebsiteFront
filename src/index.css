@@ -17,6 +17,10 @@ img {
   cursor: pointer;
 }
 
+.category {
+  max-width: 30rem;
+}
+
 .dropzone {
   border: 1px solid #ccc;
   border-radius: 5px;

@@ -5,8 +5,6 @@ import BooksView from "./components/books";
 import Navigation from "./components/naviagtion";
 import AdminPanel from "./components/adminPanel";
 import NotFound from "./components/notFound";
-import BookDetails from "./components/bookDetails";
-import AddBook from "./components/addBook";
 import UpdateBook from "./components/updateBook";
 
 class App extends Component {

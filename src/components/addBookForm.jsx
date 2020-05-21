@@ -17,7 +17,7 @@ class AddBookForm extends Component {
     link: "",
     location: "",
     id: "",
-    categoryId: "1584616466602349",
+    categoryId: "",
     errors: null,
     editing: false,
     addingCategory: false,

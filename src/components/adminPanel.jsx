@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-// import LoginForm from "./loginForm";
-import AddBookForm from "./addBookForm";
 import LoginForm from "./loginForm";
+import ManageCategories from "./manageCategories";
 
 class AdminPanel extends Component {
   state = {
@@ -35,6 +34,7 @@ class AdminPanel extends Component {
             <button onClick={this.handleLogout} className="btn btn-primary">
               Wyloguj się
             </button>
+            <ManageCategories />
           </div>
         ) : (
           <LoginForm
