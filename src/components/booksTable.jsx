@@ -1,33 +1,26 @@
 import React, { Component } from "react";
-import Like from "./common/like";
-import { Redirect } from "react-router-dom";
 import PropTypes from "prop-types";
+import MyModal from "./common/modal";
+import Image from "react-bootstrap/Image";
 
 class BooksTable extends Component {
   state = {
-    redirect: false,
+    current_book: null,
+  };
+
+  stopPropagationAndCall = (func) => (e) => {
+    e.stopPropagation();
+    func();
   };
 
   render() {
-    const {
-      books,
-      likedSet,
-      onLike,
-      onDelete,
-      onSort,
-      history,
-      categories,
-    } = this.props;
+    const { books, onEdit, onDelete, onSort, categories, logged } = this.props;
 
-    if (this.state.redirect) {
-      return <Redirect to={`/${this.state.redirect}`} />;
-    }
     return (
       <div className="table-responsive">
         <table className="table table-hover">
           <thead>
             <tr>
-              <th />
               <th className="clickable" onClick={() => onSort("title")}>
                 Tytuł
               </th>
@@ -35,8 +28,9 @@ class BooksTable extends Component {
                 Autor(ka)
               </th>
               <th>Kategoria</th>
-              <th>Okładka</th>
-              <th></th>
+              <th>Dostępność</th>
+              {this.state.logged ? <th></th> : null}
+              {this.state.logged ? <th></th> : null}
             </tr>
           </thead>
           <tbody>
@@ -44,44 +38,52 @@ class BooksTable extends Component {
               <tr
                 className="clickable"
                 onClick={() => {
-                  const redirect = `/books/${book.title}`;
-                  history.push(redirect);
-                  this.setState({ redirect });
+                  this.setState({ current_book: book });
                 }}
-                key={book.title}
+                key={book.id}
               >
-                <td>
-                  <Like
-                    liked={likedSet.has(book.title)}
-                    onClickToggle={() => onLike(book)}
-                  />
-                </td>
                 <td>{book.title}</td>
                 <td>{book.author}</td>
                 <td>{categories.get(book.category)}</td>
-                <td>
-                  <img src={`${book.image}`} />
-                </td>
+                {book.available > 0 ? <td>tak</td> : <td>nie</td>}
 
-                <td>
-                  <button
-                    className="btn btn-danger btn-sm"
-                    onClick={() => onDelete(book)}
-                  >
-                    X
-                  </button>
-                </td>
+                {logged ? (
+                  <td>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={this.stopPropagationAndCall(() =>
+                        onDelete(book)
+                      )}
+                    >
+                      X
+                    </button>
+                  </td>
+                ) : null}
+                {logged ? (
+                  <td>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={this.stopPropagationAndCall(() => onEdit(book))}
+                    >
+                      Edytuj
+                    </button>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>
         </table>
+        <MyModal
+          show={this.state.current_book && true}
+          onHide={() => this.setState({ current_book: null })}
+          book={this.state.current_book}
+        />
       </div>
     );
   }
 }
 
 BooksTable.propTypes = {
-  onLike: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
 };
 
