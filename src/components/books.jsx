@@ -12,7 +12,7 @@ import AddBook from "./addBook";
 export class BooksView extends Component {
   state = {
     books: [],
-    pageSize: 2,
+    pageSize: 10,
     currentPage: 1,
     sortColumn: {
       name: "title",
