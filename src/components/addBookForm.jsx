@@ -3,7 +3,6 @@ import { addBook, editBook } from "../services/bookService";
 import ImageUpload from "./common/imageUpload";
 import Input from "./common/input";
 import { getCategories } from "../services/categoryService";
-import { PropTypes } from "prop-types";
 
 class AddBookForm extends Component {
   state = {
@@ -22,8 +21,6 @@ class AddBookForm extends Component {
     editing: false,
     addingCategory: false,
   };
-
-  //UWAGA pamiętaj, żeby przy edytowaniu zrobić faktycznie edytowanie...
 
   validateForm = () => {
     const {

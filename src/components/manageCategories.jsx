@@ -17,7 +17,6 @@ class ManageCategories extends Component {
 
   async componentDidMount() {
     const categories = await getCategories();
-    console.log(categories.data);
     const categories_data = categories.data.map((cat) => ({
       ...cat,
       edited: false,

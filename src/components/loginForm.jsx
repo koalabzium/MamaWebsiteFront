@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { login } from "../services/loginService";
-import axios from "axios";
 
 class LoginForm extends Component {
   state = {

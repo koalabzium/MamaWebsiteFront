@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MyModal from "./common/modal";
-import Image from "react-bootstrap/Image";
 
 class BooksTable extends Component {
   state = {
