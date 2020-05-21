@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiEndpoint = process.env.API_URL + "books/";
+const apiEndpoint = process.env.REACT_APP_API_URL + "books/";
 
 export function getBooks() {
   return axios.get(apiEndpoint);
