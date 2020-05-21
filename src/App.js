@@ -20,6 +20,7 @@ class App extends Component {
           <Switch>
             <Route path={`/books`} exact component={BooksView}></Route>
             <Route path={`/admin`} component={AdminPanel}></Route>
+            <Route path={`/edit/:title`} component={UpdateBook}></Route>
 
             <Route path={`/not-found`} component={NotFound}></Route>
             <Redirect from={`/`} exact to={`/books`} />
