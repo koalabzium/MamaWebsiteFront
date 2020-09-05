@@ -68,6 +68,16 @@ class BooksTable extends Component {
                     </button>
                   </td>
                 ) : null}
+                {logged ? (
+                  <td>
+                    <button
+                      className="btn btn-warning btn-sm"
+                      onClick={this.stopPropagationAndCall(() => onEdit(book))}
+                    >
+                      Wypożycz
+                    </button>
+                  </td>
+                ) : null}
               </tr>
             ))}
           </tbody>

@@ -16,7 +16,7 @@ class AddBookForm extends Component {
     link: "",
     location: "",
     id: "",
-    categoryId: "",
+    categoryId: "1599287492509648",
     errors: null,
     editing: false,
     addingCategory: false,
@@ -36,10 +36,9 @@ class AddBookForm extends Component {
     //CZY ZDJĘCIE ODPOWIEDZNICH ROZMIARÓW?
 
     if (
-      (image === null && editing === false) ||
+      // (image === null && editing === false) || // image is optional
       title === "" ||
       author === "" ||
-      description === "" ||
       quantity === "" ||
       link === ""
     ) {
@@ -163,7 +162,7 @@ class AddBookForm extends Component {
             type=""
           />
           <Input
-            label="Link"
+            label="Odnośnik"
             name="link"
             value={link}
             onChange={this.handleChange}
