@@ -39,8 +39,7 @@ class AddBookForm extends Component {
       // (image === null && editing === false) || // image is optional
       title === "" ||
       author === "" ||
-      quantity === "" ||
-      link === ""
+      quantity === ""
     ) {
       return true;
     }
