@@ -34,7 +34,14 @@ export class BooksView extends Component {
     console.log(books);
     this.setState({ books: books.data });
     const categories = await getCategories();
-    this.setState({ categories: categories.data });
+    const cat = categories.data;
+    cat.sort(function (a, b) {
+      return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+    });
+    console.log("CAT", cat);
+    this.setState({
+      categories: cat,
+    });
 
     var lookup = new Map();
     categories.data.map((cat) => lookup.set(cat.id, cat.name));
