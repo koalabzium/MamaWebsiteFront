@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MyModal from "./common/modal";
+import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
 
 class BooksTable extends Component {
   state = {
@@ -20,16 +21,18 @@ class BooksTable extends Component {
         <table className="table table-hover">
           <thead>
             <tr>
+              {logged ? <th></th> : null}
+              {logged ? <th></th> : null}
+              {logged ? <th></th> : null}
               <th className="clickable" onClick={() => onSort("title")}>
                 Tytuł
               </th>
+
               <th className="clickable" onClick={() => onSort("author")}>
                 Autor(ka)
               </th>
               <th>Kategoria</th>
-              <th>Dostępność</th>
-              {this.state.logged ? <th></th> : null}
-              {this.state.logged ? <th></th> : null}
+              <th>Dostępnych</th>
             </tr>
           </thead>
           <tbody>
@@ -41,43 +44,51 @@ class BooksTable extends Component {
                 }}
                 key={book.id}
               >
-                <td>{book.title}</td>
-                <td>{book.author}</td>
-                <td>{categories.get(book.category)}</td>
-                {book.available > 0 ? <td>tak</td> : <td>nie</td>}
-
                 {logged ? (
                   <td>
                     <button
-                      className="btn btn-danger btn-sm"
+                      className="btn btn-outline-danger btn-sm"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Usuń"
                       onClick={this.stopPropagationAndCall(() =>
                         onDelete(book)
                       )}
                     >
-                      X
+                      <DeleteForever />
                     </button>
                   </td>
                 ) : null}
                 {logged ? (
                   <td>
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-outline-primary btn-sm"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Edytuj"
                       onClick={this.stopPropagationAndCall(() => onEdit(book))}
                     >
-                      Edytuj
+                      <Edit />
                     </button>
                   </td>
                 ) : null}
                 {logged ? (
                   <td>
                     <button
-                      className="btn btn-warning btn-sm"
+                      className="btn btn-outline-warning btn-sm"
+                      data-toggle="tooltip"
+                      data-placement="bottom"
+                      title="Wypożycz"
                       onClick={this.stopPropagationAndCall(() => onEdit(book))}
                     >
-                      Wypożycz
+                      <ArrowUpward />
                     </button>
                   </td>
                 ) : null}
+                <td>{book.title}</td>
+                <td>{book.author}</td>
+                <td>{categories.get(book.category)}</td>
+                <td>{book.available}</td>
               </tr>
             ))}
           </tbody>

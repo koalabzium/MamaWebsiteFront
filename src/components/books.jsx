@@ -136,7 +136,12 @@ export class BooksView extends Component {
       <React.Fragment>
         {books.length > 0 ? (
           <div>
-            <Categories categories={categories} onFilter={this.handleFilter} />
+            <Categories
+              categories={categories}
+              onFilter={this.handleFilter}
+              current={categories_lookup.get(currentCategory)}
+            />
+
             <BooksTable
               books={slicedBooks}
               categories={categories_lookup}
