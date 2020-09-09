@@ -20,27 +20,15 @@ class AddBookForm extends Component {
     errors: null,
     editing: false,
     addingCategory: false,
+    image_link: "",
   };
 
   validateForm = () => {
-    const {
-      image,
-      title,
-      author,
-      description,
-      quantity,
-      link,
-      editing,
-    } = this.state;
+    const { title, author, quantity } = this.state;
 
     //CZY ZDJĘCIE ODPOWIEDZNICH ROZMIARÓW?
 
-    if (
-      // (image === null && editing === false) || // image is optional
-      title === "" ||
-      author === "" ||
-      quantity === ""
-    ) {
+    if (title === "" || author === "" || quantity === "") {
       return true;
     }
 
@@ -64,6 +52,7 @@ class AddBookForm extends Component {
       editing,
       available,
       id,
+      image_link,
     } = this.state;
     e.preventDefault();
     const editedBook = {
@@ -77,15 +66,20 @@ class AddBookForm extends Component {
       available,
       id,
     };
+    console.log("EDITED", editedBook);
+    const to_save_image = image_link;
+    if (image_link === "") {
+      to_save_image = image;
+    }
     if (editing) {
-      this.props.onDoneEdit({ ...editedBook, image });
+      this.props.onDoneEdit({ ...editedBook, image: to_save_image });
       editBook(editedBook).then((res) => {
         console.log("edited, ", res);
       });
       console.log("editing");
     } else {
       console.log("Dodawaaanieee");
-      addBook({ ...editedBook, image }).then((res) => {
+      addBook({ ...editedBook, image: to_save_image }).then((res) => {
         console.log(res);
         this.props.onDoneAdd(res.data.message);
       });
@@ -142,6 +136,7 @@ class AddBookForm extends Component {
       categoryId,
       editing,
       addingCategory,
+      image_link,
     } = this.state;
     return (
       <React.Fragment>
@@ -207,18 +202,23 @@ class AddBookForm extends Component {
               onChange={this.handleChange}
             ></textarea>
           </div>
-          {editing ? null : (
-            <div className="form-group">
-              <label>Zdjęcie okładki</label>
 
-              <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
-            </div>
-          )}
+          <div className="form-group">
+            <label>Zdjęcie okładki</label>
+
+            <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
+          </div>
+          <Input
+            label="Lub wstaw link do okładki"
+            name="image_link"
+            value={image_link}
+            onChange={this.handleChange}
+            type=""
+          />
 
           {this.validateForm() ? (
             <div className="alert alert-danger" role="alert">
-              Wypełnij wszystkie pola i przytnij zdjęcie, przed zaakceptowaniem
-              książki.{" "}
+              Wpisz przynajmniej Autorkę i Tytuł.{" "}
             </div>
           ) : (
             <div className="alert alert-success" role="alert">

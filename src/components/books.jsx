@@ -30,6 +30,7 @@ export class BooksView extends Component {
 
   async componentDidMount() {
     const books = await getBooks();
+    console.log(books);
     this.setState({ loaded: true });
     console.log(books);
     this.setState({ books: books.data });

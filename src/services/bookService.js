@@ -28,6 +28,7 @@ export function editBook(data) {
 }
 
 export function addBook(data) {
+  console.log("w serwisie: ", data);
   return axios({
     method: "post",
     url: apiEndpoint,
