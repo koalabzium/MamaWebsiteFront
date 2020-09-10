@@ -163,33 +163,6 @@ class AddBookForm extends Component {
             onChange={this.handleChange}
             type=""
           />
-          <Input
-            label="Odnośnik"
-            name="link"
-            value={link}
-            onChange={this.handleChange}
-            type=""
-          />
-          <Input
-            label="Lokalizacja"
-            name="location"
-            value={location}
-            onChange={this.handleChange}
-            type=""
-          />
-          <div className="form-group">
-            <label>Ilość egzemplarzy</label>
-            <input
-              className="form-control"
-              name="quantity"
-              value={quantity}
-              onChange={this.handleChange}
-              type="number"
-              min={parseInt(minQuantity)}
-              noValidate
-            ></input>
-          </div>
-
           <div className="form-group">
             <label htmlFor="exampleFormControlSelect1">Wybierz kategorię</label>
             <select
@@ -206,6 +179,33 @@ class AddBookForm extends Component {
               ))}
             </select>
           </div>
+          <Input
+            label="Odnośnik"
+            name="link"
+            value={link}
+            onChange={this.handleChange}
+            type=""
+          />
+          <div className="form-group">
+            <label>Ilość egzemplarzy</label>
+            <input
+              className="form-control"
+              name="quantity"
+              value={quantity}
+              onChange={this.handleChange}
+              type="number"
+              min={parseInt(minQuantity)}
+              noValidate
+            ></input>
+          </div>
+          <Input
+            label="Lokalizacja"
+            name="location"
+            value={location}
+            onChange={this.handleChange}
+            type=""
+          />
+
           <div className="form-group">
             <label htmlFor="exampleFormControlTextarea1">Opis książki</label>
             <textarea
