@@ -55,7 +55,7 @@ class AddBookForm extends Component {
       image_link,
     } = this.state;
     e.preventDefault();
-    const editedBook = {
+    let editedBook = {
       title,
       author,
       description,
@@ -72,7 +72,9 @@ class AddBookForm extends Component {
       to_save_image = image;
     }
     if (editing) {
-      this.props.onDoneEdit({ ...editedBook, image: to_save_image });
+      editedBook = { ...editedBook, image: to_save_image };
+      console.log(editedBook);
+      this.props.onDoneEdit(editedBook);
       editBook(editedBook).then((res) => {
         console.log("edited, ", res);
       });
