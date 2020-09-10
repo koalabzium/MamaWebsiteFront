@@ -14,14 +14,14 @@ class Navigation extends Component {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto">
+            {/* <Nav className="mr-auto">
               <Nav.Link
                 // href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
                 href={`/books`}
               >
                 Książki
               </Nav.Link>
-            </Nav>
+            </Nav> */}
             <Form inline>
               <Button variant="outline-dark" href={`/admin`}>
                 Panel adminki

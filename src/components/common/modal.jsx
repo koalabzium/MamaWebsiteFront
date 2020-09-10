@@ -27,17 +27,29 @@ const MyModal = (props) => {
               <Card.Subtitle className="mb-2 text-muted">
                 {book.author}
               </Card.Subtitle>
-              <Card.Text>{book.description}</Card.Text>
+              <Card.Text>{book.link}</Card.Text>
             </Card.Body>
             {localStorage.getItem("token") ? (
               <ListGroup className="list-group-flush">
-                <ListGroupItem>Ilość: {book.quantity}</ListGroupItem>
+                <ListGroupItem>
+                  Dostępne egzemplarze: {book.quantity}
+                </ListGroupItem>
                 <ListGroupItem>
                   Wpożyczenia: (tu będzie coś o wypożyczaniu)
                 </ListGroupItem>
                 <ListGroupItem>Lokalizacja: {book.location} </ListGroupItem>
+                <ListGroupItem>Opis: {book.description} </ListGroupItem>
               </ListGroup>
-            ) : null}
+            ) : (
+              <ListGroup>
+                <ListGroup className="list-group-flush">
+                  <ListGroupItem>
+                    Dostępne egzemplarze: {book.quantity}
+                  </ListGroupItem>
+                  <ListGroupItem>Opis: {book.description} </ListGroupItem>
+                </ListGroup>{" "}
+              </ListGroup>
+            )}
           </Card>
         </Modal.Body>
       </Modal>
