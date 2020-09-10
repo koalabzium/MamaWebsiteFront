@@ -67,7 +67,7 @@ class AddBookForm extends Component {
       id,
     };
     console.log("EDITED", editedBook);
-    const to_save_image = image_link;
+    let to_save_image = image_link;
     if (image_link === "") {
       to_save_image = image;
     }
