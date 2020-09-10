@@ -21,6 +21,7 @@ class AddBookForm extends Component {
     editing: false,
     addingCategory: false,
     image_link: "",
+    minQuantity: 0,
   };
 
   validateForm = () => {
@@ -53,8 +54,11 @@ class AddBookForm extends Component {
       available,
       id,
       image_link,
+      originalQuantity,
     } = this.state;
     e.preventDefault();
+    const newAvailibility =
+      parseInt(available) + parseInt(quantity - originalQuantity);
     let editedBook = {
       title,
       author,
@@ -63,7 +67,7 @@ class AddBookForm extends Component {
       link,
       location,
       category: categoryId,
-      available,
+      available: newAvailibility,
       id,
     };
     console.log("EDITED", editedBook);
@@ -103,16 +107,15 @@ class AddBookForm extends Component {
 
   modifyStateWithEditedBook = (book) => {
     if (book) {
-      this.setState({ title: book.title });
-      this.setState({ author: book.author });
-      this.setState({ categoryId: book.category });
-      this.setState({ link: book.link });
-      this.setState({ location: book.location });
-      this.setState({ description: book.description });
-      this.setState({ quantity: book.quantity });
-      this.setState({ image: book.image });
-      this.setState({ id: book.id });
-      this.setState({ available: book.available });
+      const { quantity, available, category, ...rest } = book;
+      this.setState({
+        ...rest,
+        originalQuantity: quantity,
+        quantity,
+        categoryId: category,
+        available,
+        minQuantity: quantity - available,
+      });
     }
   };
 
@@ -128,6 +131,7 @@ class AddBookForm extends Component {
   render() {
     const {
       categories,
+      available,
       image,
       title,
       author,
@@ -138,8 +142,10 @@ class AddBookForm extends Component {
       categoryId,
       editing,
       addingCategory,
+      minQuantity,
       image_link,
     } = this.state;
+
     return (
       <React.Fragment>
         <form onSubmit={this.handleSubmit} noValidate>
@@ -171,13 +177,19 @@ class AddBookForm extends Component {
             onChange={this.handleChange}
             type=""
           />
-          <Input
-            label="Ilość egzemplarzy"
-            name="quantity"
-            value={quantity}
-            onChange={this.handleChange}
-            type="number"
-          />
+          <div className="form-group">
+            <label>Ilość egzemplarzy</label>
+            <input
+              className="form-control"
+              name="quantity"
+              value={quantity}
+              onChange={this.handleChange}
+              type="number"
+              min={parseInt(minQuantity)}
+              noValidate
+            ></input>
+          </div>
+
           <div className="form-group">
             <label htmlFor="exampleFormControlSelect1">Wybierz kategorię</label>
             <select

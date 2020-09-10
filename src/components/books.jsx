@@ -8,6 +8,7 @@ import { getBooks, deleteBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
 import AddBook from "./addBook";
+import BorrowBook from "./borrowBook";
 
 export class BooksView extends Component {
   state = {
@@ -23,6 +24,7 @@ export class BooksView extends Component {
     categories_lookup: new Map(),
     logged: localStorage.getItem("token"),
     editedBook: null,
+    borrowedBook: null,
     adding: false,
     loaded: false,
     addingCategory: false,
@@ -60,6 +62,7 @@ export class BooksView extends Component {
   handleEdit = (book) => {
     console.log("Editing");
     this.setState({ adding: false });
+    this.setState({ borrowedBook: null });
     this.setState({ editedBook: book });
   };
 
@@ -94,6 +97,20 @@ export class BooksView extends Component {
     this.setState({ adding: false });
   };
 
+  handleBorrow = (book) => {
+    this.setState({ adding: false });
+    this.setState({ editedBook: null });
+    this.setState({ borrowedBook: book });
+    console.log("handleBorrow", book);
+  };
+
+  handleBorrowDone = (book) => {
+    if (book) {
+      console.log("Wypożyczona");
+    }
+    this.setState({ borrowedBook: null });
+  };
+
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
   };
@@ -126,6 +143,7 @@ export class BooksView extends Component {
       logged,
       loaded,
       editedBook,
+      borrowedBook,
     } = this.state;
     const filtered =
       currentCategory !== null
@@ -156,12 +174,20 @@ export class BooksView extends Component {
               onDelete={this.handleDelete}
               onEdit={this.handleEdit}
               onSort={this.handleSort}
+              onBorrow={this.handleBorrow}
               logged={logged}
             />
           </div>
         ) : (
           <h4>Brak książek. Marysia na pewno je doda w przyszłości!</h4>
         )}
+        <Pagination
+          itemsCount={books.length}
+          pageSize={pageSize}
+          onPageChange={this.handlePageChange}
+          currentPage={currentPage}
+        />
+
         {adding ? <AddBook onDoneAdd={this.handleAddDone}></AddBook> : null}
 
         {editedBook ? (
@@ -171,12 +197,13 @@ export class BooksView extends Component {
             onDoneEdit={this.handleEditDone}
           />
         ) : null}
-        <Pagination
-          itemsCount={books.length}
-          pageSize={pageSize}
-          onPageChange={this.handlePageChange}
-          currentPage={currentPage}
-        />
+        {borrowedBook ? (
+          <BorrowBook
+            book={borrowedBook}
+            history={this.props.history}
+            onDoneBorrow={this.handleBorrowDone}
+          />
+        ) : null}
 
         {logged && !adding && !editedBook ? (
           <button className="btn btn-warning" onClick={this.handleAdd}>

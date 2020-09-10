@@ -13,8 +13,20 @@ class BooksTable extends Component {
     func();
   };
 
+  checkAvailibility = (book) => {
+    return book.available <= 0;
+  };
+
   render() {
-    const { books, onEdit, onDelete, onSort, categories, logged } = this.props;
+    const {
+      books,
+      onEdit,
+      onDelete,
+      onBorrow,
+      onSort,
+      categories,
+      logged,
+    } = this.props;
 
     return (
       <div className="table-responsive">
@@ -79,7 +91,10 @@ class BooksTable extends Component {
                       data-toggle="tooltip"
                       data-placement="bottom"
                       title="Wypożycz"
-                      onClick={this.stopPropagationAndCall(() => onEdit(book))}
+                      disabled={this.checkAvailibility(book)}
+                      onClick={this.stopPropagationAndCall(() =>
+                        onBorrow(book)
+                      )}
                     >
                       <ArrowUpward />
                     </button>
