@@ -63,6 +63,7 @@ class BooksTable extends Component {
                       data-toggle="tooltip"
                       data-placement="bottom"
                       title="Usuń"
+                      disabled={false}
                       onClick={this.stopPropagationAndCall(() =>
                         onDelete(book)
                       )}

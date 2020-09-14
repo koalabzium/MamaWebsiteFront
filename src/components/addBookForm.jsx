@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { addBook, editBook } from "../services/bookService";
-import ImageUpload from "./common/imageUpload";
+import Dropzone from "react-dropzone";
+import Resizer from "react-image-file-resizer";
 import Input from "./common/input";
 import { getCategories } from "../services/categoryService";
 
@@ -24,10 +25,24 @@ class AddBookForm extends Component {
     minQuantity: 0,
   };
 
+  resizeFile = (file) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        500,
+        500,
+        "JPEG",
+        70,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "base64"
+      );
+    });
+
   validateForm = () => {
     const { title, author, quantity } = this.state;
-
-    //CZY ZDJĘCIE ODPOWIEDZNICH ROZMIARÓW?
 
     if (title === "" || author === "" || quantity === "") {
       return true;
@@ -89,6 +104,22 @@ class AddBookForm extends Component {
         console.log(res);
         this.props.onDoneAdd(res.data.message);
       });
+    }
+  };
+
+  handleOnDrop = async (files) => {
+    if (files && files.length > 0) {
+      const currentFile = files[0];
+      const image = await this.resizeFile(currentFile);
+      console.log(image);
+      this.setState({ image });
+      // const myFileItemReader = new FileReader();
+      // myFileItemReader.addEventListener("load", () => {
+      //   const result = myFileItemReader.result;
+
+      //   this.setState({ image: result });
+      // });
+      // myFileItemReader.readAsDataURL(currentFile);
     }
   };
 
@@ -217,11 +248,42 @@ class AddBookForm extends Component {
             ></textarea>
           </div>
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>Zdjęcie okładki</label>
 
             <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
+          </div> */}
+          <div className="form-group">
+            <label>Zdjęcie okładki</label>
+            {this.state.image ? (
+              <div>
+                <img
+                  src={this.state.image}
+                  className="rounded img-fluid float-left"
+                  alt="okładka"
+                />
+
+                <div>
+                  <button onClick={() => this.setState({ image: null })}>
+                    Zmień zdjęcie
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <Dropzone onDrop={this.handleOnDrop}>
+                {({ getRootProps, getInputProps }) => (
+                  <div {...getRootProps()}>
+                    <input {...getInputProps()} />
+                    <div className="dropzone clickable">
+                      Przeciągnij zdjęcie lub kliknij tutaj i wybierz je z
+                      plików.
+                    </div>
+                  </div>
+                )}
+              </Dropzone>
+            )}
           </div>
+
           <Input
             label="Lub wstaw link do okładki"
             name="image_link"
