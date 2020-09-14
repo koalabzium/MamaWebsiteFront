@@ -257,14 +257,20 @@ class AddBookForm extends Component {
             <label>Zdjęcie okładki</label>
             {this.state.image ? (
               <div>
-                <img
-                  src={this.state.image}
-                  className="rounded img-fluid float-left"
-                  alt="okładka"
-                />
+                <div>
+                  <img
+                    src={this.state.image}
+                    className="rounded"
+                    alt="okładka"
+                  />
+                </div>
 
                 <div>
-                  <button onClick={() => this.setState({ image: null })}>
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => this.setState({ image: null })}
+                    style={{ marginTop: 10 }}
+                  >
                     Zmień zdjęcie
                   </button>
                 </div>
