@@ -17,7 +17,7 @@ class AddBookForm extends Component {
     link: "",
     location: "",
     id: "",
-    categoryId: "1599287492509648",
+    categoryId: null,
     errors: null,
     editing: false,
     addingCategory: false,
@@ -203,6 +203,7 @@ class AddBookForm extends Component {
               className="form-control"
               id="exampleFormControlSelect1"
             >
+              <option value={null}></option>
               {categories.map((category) => (
                 <option value={category.id} key={category.id}>
                   {category.name}
