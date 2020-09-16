@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import MyModal from "./common/modal";
 import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
+import BookDetails from "./bookDetails";
 
 class BooksTable extends Component {
   state = {
@@ -109,7 +110,7 @@ class BooksTable extends Component {
             ))}
           </tbody>
         </table>
-        <MyModal
+        <BookDetails
           show={this.state.current_book && true}
           onHide={() => this.setState({ current_book: null })}
           book={this.state.current_book}

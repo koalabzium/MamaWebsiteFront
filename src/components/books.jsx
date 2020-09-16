@@ -9,6 +9,7 @@ import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
 import AddBook from "./addBook";
 import BorrowBook from "./borrowBook";
+import BookDetails from "./bookDetails";
 
 export class BooksView extends Component {
   state = {

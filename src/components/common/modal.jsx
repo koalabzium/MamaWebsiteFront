@@ -7,6 +7,7 @@ import ListGroupItem from "react-bootstrap/ListGroupItem";
 const MyModal = (props) => {
   const { book } = props;
   if (book) {
+    console.log(book.borrowing);
     return (
       <Modal
         {...props}
@@ -34,9 +35,18 @@ const MyModal = (props) => {
                 <ListGroupItem>
                   Dostępne egzemplarze: {book.quantity}
                 </ListGroupItem>
-                <ListGroupItem>
-                  Wpożyczenia: (tu będzie coś o wypożyczaniu)
-                </ListGroupItem>
+                {book.borrowing ? (
+                  <ListGroupItem>
+                    Wpożyczenia:{" "}
+                    {book.borrowing.map((b) => (
+                      <div key={b.id}>
+                        {b.person} - {b.date} - {b.quantity} -
+                      </div>
+                    ))}
+                  </ListGroupItem>
+                ) : (
+                  <ListGroupItem>Brak wypożyczeń</ListGroupItem>
+                )}
                 <ListGroupItem>Lokalizacja: {book.location} </ListGroupItem>
                 <ListGroupItem>Opis: {book.description} </ListGroupItem>
               </ListGroup>

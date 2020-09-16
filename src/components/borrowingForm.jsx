@@ -18,6 +18,7 @@ class BorrowingForm extends Component {
     console.log("lista bez nowego", borrowingList);
     const copiesLeft = book.available - quantity;
     const newBorrowing = {
+      id: Date.now(),
       date,
       quantity,
       person,
