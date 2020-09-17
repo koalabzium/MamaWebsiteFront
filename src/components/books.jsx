@@ -182,12 +182,7 @@ export class BooksView extends Component {
       <React.Fragment>
         {books.length > 0 ? (
           <div>
-            {adding ? (
-              <AddBook
-                ref={(ref) => (this.myRef = ref)}
-                onDoneAdd={this.handleAddDone}
-              ></AddBook>
-            ) : null}
+            {adding ? <AddBook onDoneAdd={this.handleAddDone}></AddBook> : null}
 
             {editedBook ? (
               <UpdateBook

@@ -48,7 +48,6 @@ class BookDetails extends Component {
     const { book } = this.props;
 
     if (book) {
-      console.log("JESTEŚ? ", this.state.book);
       return (
         <Modal
           {...this.props}

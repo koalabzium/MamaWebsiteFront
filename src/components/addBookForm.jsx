@@ -4,6 +4,7 @@ import Dropzone from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 import Input from "./common/input";
 import { getCategories } from "../services/categoryService";
+import imageToBase64 from "image-to-base64/image-to-base64";
 
 class AddBookForm extends Component {
   state = {
@@ -49,6 +50,27 @@ class AddBookForm extends Component {
     }
 
     return false;
+  };
+
+  toDataURL(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      var reader = new FileReader();
+      reader.onloadend = function () {
+        callback(reader.result);
+      };
+      reader.readAsDataURL(xhr.response);
+    };
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
+    xhr.send();
+  }
+
+  handleUrlChange = async (e) => {
+    console.log(e.target.value);
+    this.toDataURL(e.target.value, (dataUrl) => {
+      this.setState({ image: dataUrl });
+    });
   };
 
   handleChange = (e) => {
@@ -203,7 +225,7 @@ class AddBookForm extends Component {
               className="form-control"
               id="exampleFormControlSelect1"
             >
-              <option value={null}></option>
+              <option value=""></option>
               {categories.map((category) => (
                 <option value={category.id} key={category.id}>
                   {category.name}
@@ -295,7 +317,7 @@ class AddBookForm extends Component {
             label="Lub wstaw link do okładki"
             name="image_link"
             value={image_link}
-            onChange={this.handleChange}
+            onChange={this.handleUrlChange}
             type=""
           />
 
