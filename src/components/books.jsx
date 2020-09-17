@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useRef } from "react";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import BooksTable from "./booksTable";
@@ -65,6 +65,7 @@ export class BooksView extends Component {
     this.setState({ adding: false });
     this.setState({ borrowedBook: null });
     this.setState({ editedBook: book });
+    window.scrollTo(0, 0);
   };
 
   handleEditDone = (book) => {
@@ -85,7 +86,7 @@ export class BooksView extends Component {
 
   handleAdd = () => {
     this.setState({ adding: true });
-    // this.props.history.push("/new-book");
+    window.scrollTo(0, 0); // this.props.history.push("/new-book");
   };
 
   handleAddDone = (book) => {
@@ -102,6 +103,7 @@ export class BooksView extends Component {
     this.setState({ adding: false });
     this.setState({ editedBook: null });
     this.setState({ borrowedBook: book });
+    window.scrollTo(0, 0);
     console.log("handleBorrow", book);
   };
 
@@ -130,6 +132,8 @@ export class BooksView extends Component {
     console.log(category);
     this.setState({ currentCategory: category });
   };
+
+  myRef = null;
 
   render() {
     const {
@@ -163,6 +167,29 @@ export class BooksView extends Component {
       <React.Fragment>
         {books.length > 0 ? (
           <div>
+            {adding ? (
+              <AddBook
+                ref={(ref) => (this.myRef = ref)}
+                onDoneAdd={this.handleAddDone}
+              ></AddBook>
+            ) : null}
+
+            {editedBook ? (
+              <UpdateBook
+                book={editedBook}
+                history={this.props.history}
+                onDoneEdit={this.handleEditDone}
+              />
+            ) : null}
+
+            {borrowedBook ? (
+              <BorrowBook
+                book={borrowedBook}
+                history={this.props.history}
+                onDoneBorrow={this.handleBorrowDone}
+              />
+            ) : null}
+
             <Categories
               categories={categories}
               onFilter={this.handleFilter}
@@ -188,23 +215,7 @@ export class BooksView extends Component {
           onPageChange={this.handlePageChange}
           currentPage={currentPage}
         />
-
-        {adding ? <AddBook onDoneAdd={this.handleAddDone}></AddBook> : null}
-
-        {editedBook ? (
-          <UpdateBook
-            book={editedBook}
-            history={this.props.history}
-            onDoneEdit={this.handleEditDone}
-          />
-        ) : null}
-        {borrowedBook ? (
-          <BorrowBook
-            book={borrowedBook}
-            history={this.props.history}
-            onDoneBorrow={this.handleBorrowDone}
-          />
-        ) : null}
+        <div ref={(ref) => (this.myRef = ref)}></div>
 
         {logged && !adding && !editedBook ? (
           <button className="btn btn-warning" onClick={this.handleAdd}>

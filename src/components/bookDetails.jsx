@@ -8,6 +8,7 @@ import { Delete } from "@material-ui/icons";
 
 const BookDetails = (props) => {
   const { book } = props;
+
   if (book) {
     console.log(book.borrowing);
     return (
@@ -72,6 +73,7 @@ const BookDetails = (props) => {
                                       bottom: 1,
                                     }}
                                     className="btn btn-outline-danger btn-sm"
+                                    // onClick={()=> }
                                   >
                                     X
                                   </button>
