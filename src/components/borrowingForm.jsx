@@ -22,6 +22,7 @@ class BorrowingForm extends Component {
       date,
       quantity,
       person,
+      active: true,
     };
     borrowingList.push(newBorrowing);
     console.log("lista po push", borrowingList);

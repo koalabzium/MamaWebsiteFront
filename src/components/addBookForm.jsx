@@ -275,11 +275,6 @@ class AddBookForm extends Component {
             ></textarea>
           </div>
 
-          {/* <div className="form-group">
-            <label>Zdjęcie okładki</label>
-
-            <ImageUpload submitCrop={this.handlePictureCrop} image={image} />
-          </div> */}
           <div className="form-group">
             <label>Zdjęcie okładki</label>
             {this.state.image ? (
@@ -321,7 +316,7 @@ class AddBookForm extends Component {
             label="Lub wstaw link do okładki"
             name="image_link"
             value={image_link}
-            onChange={this.handleUrlChange}
+            onChange={this.handleChange}
             type=""
           />
 
