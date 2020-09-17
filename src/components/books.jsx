@@ -10,6 +10,8 @@ import UpdateBook from "./updateBook";
 import AddBook from "./addBook";
 import BorrowBook from "./borrowBook";
 import BookDetails from "./bookDetails";
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 export class BooksView extends Component {
   state = {
@@ -51,6 +53,19 @@ export class BooksView extends Component {
     categories.data.map((cat) => lookup.set(cat.id, cat.name));
     this.setState({ categories_lookup: lookup });
   }
+
+  confirmDelete = (book) => {
+    confirmAlert({
+      title: `Usuwanie ${book.title}`,
+      message: "Jesteś pewna?",
+      buttons: [
+        {
+          label: "Tak",
+          onClick: () => this.handleDelete(book),
+        },
+      ],
+    });
+  };
 
   handleDelete = async (book) => {
     console.log("Deleting", book);
@@ -195,11 +210,16 @@ export class BooksView extends Component {
               onFilter={this.handleFilter}
               current={categories_lookup.get(currentCategory)}
             />
+            {logged && !adding && !editedBook ? (
+              <button className="btn btn-warning" onClick={this.handleAdd}>
+                Dodaj książkę
+              </button>
+            ) : null}
 
             <BooksTable
               books={slicedBooks}
               categories={categories_lookup}
-              onDelete={this.handleDelete}
+              onDelete={this.confirmDelete}
               onEdit={this.handleEdit}
               onSort={this.handleSort}
               onBorrow={this.handleBorrow}
@@ -216,12 +236,6 @@ export class BooksView extends Component {
           currentPage={currentPage}
         />
         <div ref={(ref) => (this.myRef = ref)}></div>
-
-        {logged && !adding && !editedBook ? (
-          <button className="btn btn-warning" onClick={this.handleAdd}>
-            Dodaj książkę
-          </button>
-        ) : null}
       </React.Fragment>
     );
   }

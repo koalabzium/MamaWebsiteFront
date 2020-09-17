@@ -1,12 +1,18 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import MyModal from "./common/modal";
 import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
 import BookDetails from "./bookDetails";
 
 class BooksTable extends Component {
   state = {
     current_book: null,
+    to_delete: null,
+  };
+
+  // Edytuj tu książkę,
+
+  deleteBorrowing = (book, borrowing_id) => {
+    console.log(book, borrowing_id);
   };
 
   stopPropagationAndCall = (func) => (e) => {
@@ -28,6 +34,8 @@ class BooksTable extends Component {
       categories,
       logged,
     } = this.props;
+
+    const { current_book } = this.state;
 
     return (
       <div className="table-responsive">
@@ -111,9 +119,9 @@ class BooksTable extends Component {
           </tbody>
         </table>
         <BookDetails
-          show={this.state.current_book && true}
+          show={current_book && true}
           onHide={() => this.setState({ current_book: null })}
-          book={this.state.current_book}
+          book={current_book}
         />
       </div>
     );
