@@ -4,11 +4,12 @@ import Dropzone from "react-dropzone";
 import Resizer from "react-image-file-resizer";
 import Input from "./common/input";
 import { getCategories } from "../services/categoryService";
-import imageToBase64 from "image-to-base64/image-to-base64";
+import Select from "react-select";
 
 class AddBookForm extends Component {
   state = {
     categories: [],
+    options: [],
     image: null,
     editedBook: null,
     title: "",
@@ -75,6 +76,10 @@ class AddBookForm extends Component {
 
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
+  };
+
+  handleSelect = (e) => {
+    this.setState({ categoryId: e.value });
   };
 
   handleSubmit = (e) => {
@@ -178,12 +183,22 @@ class AddBookForm extends Component {
       this.modifyStateWithEditedBook(this.props.book);
     }
     const { data: categories } = await getCategories();
+    const options = categories
+      .sort(function (a, b) {
+        return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+      })
+      .map((cat) => {
+        return { value: cat.id, label: cat.name };
+      });
+    console.log(options);
+    this.setState({ options });
     this.setState({ categories });
   }
 
   render() {
     const {
       categories,
+      options,
       available,
       image,
       title,
@@ -216,23 +231,12 @@ class AddBookForm extends Component {
             onChange={this.handleChange}
             type=""
           />
+
           <div className="form-group">
-            <label htmlFor="exampleFormControlSelect1">Wybierz kategorię</label>
-            <select
-              value={categoryId}
-              name="categoryId"
-              onChange={this.handleChange}
-              className="form-control"
-              id="exampleFormControlSelect1"
-            >
-              <option value=""></option>
-              {categories.map((category) => (
-                <option value={category.id} key={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            <label>Wybierz kategorię</label>
+            <Select options={options} onChange={this.handleSelect} />
           </div>
+
           <Input
             label="Odnośnik"
             name="link"
