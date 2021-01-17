@@ -10,6 +10,19 @@ const Pagination = (props) => {
     <React.Fragment>
       <nav aria-label="Page navigation example">
         <ul className="pagination">
+
+        <li
+              key={'prev'}
+              className={
+                currentPage > 1 ? "page-item" : "page-item disabled"
+              }
+            >
+              <a className="page-link" onClick={() => onPageChange(currentPage-1)}>
+                Poprzednia
+              </a>
+            </li>
+
+
           {pages.map((page) => (
             <li
               key={page}
@@ -22,6 +35,20 @@ const Pagination = (props) => {
               </a>
             </li>
           ))}
+
+
+            <li
+              key={'prev'}
+              className={
+                currentPage < pagesCount ? "page-item" : "page-item disabled"
+              }
+            >
+              <a className="page-link" onClick={() => onPageChange(currentPage+1)}>
+                Następna
+              </a>
+            </li>
+
+
         </ul>
       </nav>
     </React.Fragment>

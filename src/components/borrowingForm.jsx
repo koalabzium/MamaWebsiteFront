@@ -1,16 +1,19 @@
 import React, { Component } from "react";
 import Input from "./common/input";
 import { editBook } from "../services/bookService";
+import { getReaders } from "../services/readerService";
+import Select from "react-select";
 
 class BorrowingForm extends Component {
   state = {
     date: "",
     quantity: 1,
-    person: "",
+    personId: null,
+    options: [],
   };
 
   handleSubmit = (e) => {
-    const { date, quantity, person } = this.state;
+    const { date, quantity, personId } = this.state;
     const { book } = this.props;
     e.preventDefault();
     console.log("book na poczatku", book);
@@ -21,7 +24,7 @@ class BorrowingForm extends Component {
       id: Date.now(),
       date,
       quantity,
-      person,
+      personId,
       active: true,
     };
     borrowingList.push(newBorrowing);
@@ -39,6 +42,15 @@ class BorrowingForm extends Component {
   };
   async componentDidMount() {
     this.setState({ book: this.props.book });
+    const { data: readers } = await getReaders();
+    const options = readers
+      .sort(function (a, b) {
+        return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
+      })
+      .map((cat) => {
+        return { value: cat.id, label: cat.name };
+      });
+    this.setState({ options });
     //NA TAKIEJ SAMEJ ZASADZIE KIEDYŚ USERS...
     // const { data: categories } = await getCategories();
     // this.setState({ categories });
@@ -47,18 +59,21 @@ class BorrowingForm extends Component {
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   };
+
+  handleSelect = (e) => {
+    this.setState({ personId: e.value });
+  };
+
   render() {
-    const { person, date, quantity, book } = this.state;
+    const { personId, date, quantity, options } = this.state;
     return (
       <React.Fragment>
         <form onSubmit={this.handleSubmit} noValidate>
-          <Input
-            label="Wypożyczający_a"
-            name="person"
-            value={person}
-            onChange={this.handleChange}
-            type=""
-          />
+          <div className="form-group">
+            <label>Wybierz czytelnika_czkę</label>
+            <Select options={options} onChange={this.handleSelect} />
+          </div>
+
           <Input
             label="Data"
             name="date"

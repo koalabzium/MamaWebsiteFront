@@ -9,6 +9,8 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 class BookDetails extends Component {
   state = {
     book: this.props.book,
+    activeBorrows: [],
+    prevBorrows: [],
   };
 
   confirmDeleteBorrowing = (book, borrowingId) => {
@@ -27,7 +29,14 @@ class BookDetails extends Component {
 
   handleDeleteBorrowing = (book, borrowing) => {
     console.log("Do usunięcia: ", borrowing);
-    let borrowingList = book.borrowing.filter((b) => b.id !== borrowing.id);
+
+    let borrowingList = book.borrowing;
+    for (var i in borrowingList) {
+      if (borrowingList[i].id == borrowing.id) {
+        borrowingList[i].active = false;
+        break;
+      }
+    }
     const available = book.available + borrowing.quantity;
     const newBook = {
       ...book,
@@ -96,28 +105,31 @@ class BookDetails extends Component {
                             Wypożyczenia:
                             {book.borrowing.length > 0 ? (
                               <ListGroup>
-                                {book.borrowing.map((b) => (
-                                  <ListGroupItem
-                                    style={{ padding: 5 }}
-                                    variant="success"
-                                    key={b.id}
-                                  >
-                                    {b.person} : {b.date} : {b.quantity}
-                                    <button
-                                      style={{
-                                        position: "absolute",
-                                        right: 5,
-                                        bottom: 1,
-                                      }}
-                                      className="btn btn-outline-danger btn-sm"
-                                      onClick={this.stopPropagationAndCall(() =>
-                                        this.handleDeleteBorrowing(book, b)
-                                      )}
+                                {book.borrowing.map((b) =>
+                                  b.active ? (
+                                    <ListGroupItem
+                                      style={{ padding: 5 }}
+                                      variant="success"
+                                      key={b.id}
                                     >
-                                      X
-                                    </button>
-                                  </ListGroupItem>
-                                ))}
+                                      {b.person} : {b.date} : {b.quantity}
+                                      <button
+                                        style={{
+                                          position: "absolute",
+                                          right: 5,
+                                          bottom: 1,
+                                        }}
+                                        className="btn btn-outline-danger btn-sm"
+                                        onClick={this.stopPropagationAndCall(
+                                          () =>
+                                            this.handleDeleteBorrowing(book, b)
+                                        )}
+                                      >
+                                        X
+                                      </button>
+                                    </ListGroupItem>
+                                  ) : null
+                                )}
                               </ListGroup>
                             ) : null}
                           </ListGroupItem>

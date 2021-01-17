@@ -2,12 +2,18 @@ import axios from "axios";
 
 const apiEndpoint = process.env.REACT_APP_API_URL + "books/";
 
-export function getBooks() {
-  return axios.get(apiEndpoint);
+export function getBooks(params) {
+  return axios.get(apiEndpoint, {
+    params: params,
+  });
 }
 
 export function getBook(id) {
   return axios.get(apiEndpoint + id);
+}
+
+export function getBooksBorrowings(id) {
+  return axios.get(apiEndpoint + id + "/borrowings");
 }
 
 export function deleteBook(id) {

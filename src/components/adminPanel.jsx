@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import LoginForm from "./loginForm";
 import ManageCategories from "./manageCategories";
+import ManageReaders from "./manageReaders";
 
 class AdminPanel extends Component {
   state = {
@@ -34,7 +35,14 @@ class AdminPanel extends Component {
             <button onClick={this.handleLogout} className="btn btn-primary">
               Wyloguj się
             </button>
-            <ManageCategories />
+            <div className="row">
+              <div className="col">
+                <ManageCategories />
+              </div>
+              <div className="col">
+                <ManageReaders />
+              </div>
+            </div>
           </div>
         ) : (
           <LoginForm

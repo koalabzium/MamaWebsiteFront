@@ -1,6 +1,5 @@
-import React, { Component, useRef } from "react";
+import React, { Component } from "react";
 import Pagination from "./common/pagination";
-import { paginate } from "../utils/paginate";
 import BooksTable from "./booksTable";
 import _ from "lodash";
 import Categories from "./categories";
@@ -9,14 +8,16 @@ import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
 import AddBook from "./addBook";
 import BorrowBook from "./borrowBook";
-import BookDetails from "./bookDetails";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import { getReaders } from "../services/readerService";
+import Input from "./common/input";
 
 export class BooksView extends Component {
   state = {
     books: [],
     pageSize: 10,
+    totalCount: 0,
     currentPage: 1,
     sortColumn: {
       name: "title",
@@ -24,34 +25,55 @@ export class BooksView extends Component {
     },
     categories: [],
     currentCategory: null,
-    categories_lookup: new Map(),
+    categoriesLookup: new Map(),
     logged: localStorage.getItem("token"),
     editedBook: null,
     borrowedBook: null,
     adding: false,
     loaded: false,
     addingCategory: false,
+
+    searchPhrase: ""
   };
 
+  async reloadBooks (page, categoryId, search) {
+
+    const {data: booksRes} = await getBooks({
+      page, 
+      categoryId, 
+      search});
+  
+    const {
+      results = [],
+      totalCount = 0
+    } = booksRes
+
+    this.setState({ books: results, loaded: true, totalCount: totalCount });
+  }
+
   async componentDidMount() {
-    const books = await getBooks();
-    console.log(books);
-    this.setState({ loaded: true });
-    console.log(books);
-    this.setState({ books: books.data });
+    const {
+      currentPage,
+      currentCategory,
+      searchPhrase
+    } = this.state
+    this.reloadBooks(currentPage, currentCategory, searchPhrase)
     const categories = await getCategories();
     const cat = categories.data;
     cat.sort(function (a, b) {
       return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
     });
-    console.log("CAT", cat);
     this.setState({
       categories: cat,
     });
 
+    const readersData = await getReaders();
+    var readers = new Map();
+    readersData.data.map((r) => readers.set(r.id, r.name));
+    this.setState({ readers });
     var lookup = new Map();
     categories.data.map((cat) => lookup.set(cat.id, cat.name));
-    this.setState({ categories_lookup: lookup });
+    this.setState({ categoriesLookup: lookup });
   }
 
   confirmDelete = (book) => {
@@ -131,6 +153,8 @@ export class BooksView extends Component {
 
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
+    const {currentCategory, searchPhrase} = this.state
+    this.reloadBooks(page, currentCategory, searchPhrase)
   };
 
   handleSort = (column) => {
@@ -145,8 +169,21 @@ export class BooksView extends Component {
 
   handleFilter = (category) => {
     console.log(category);
-    this.setState({ currentCategory: category });
+    this.reloadBooks(1, category, this.state.searchPhrase)
+    this.setState({ currentCategory: category, currentPage: 1 });
   };
+
+  handleSearchEdit = (event) => {
+    console.log(event.target.value);
+    this.setState({ searchPhrase: event.target.value});
+  };  
+
+  handleSearchSubmit = (e) => {
+    e.preventDefault();
+
+    this.reloadBooks(1, this.state.category, this.state.searchPhrase)
+
+  }
 
   myRef = null;
 
@@ -154,23 +191,21 @@ export class BooksView extends Component {
     const {
       adding,
       books,
+      readers,
       pageSize,
       currentPage,
       sortColumn,
       categories,
       currentCategory,
-      categories_lookup,
+      categoriesLookup,
       logged,
       loaded,
       editedBook,
       borrowedBook,
     } = this.state;
-    const filtered =
-      currentCategory !== null
-        ? books.filter((book) => book.category === currentCategory)
-        : books;
+    const filtered = books;
     const sorted = _.orderBy(filtered, [sortColumn.name], [sortColumn.order]);
-    const slicedBooks = paginate(sorted, currentPage, pageSize);
+    const slicedBooks = sorted;
 
     if (loaded === false)
       return (
@@ -180,7 +215,7 @@ export class BooksView extends Component {
       );
     return (
       <React.Fragment>
-        {books.length > 0 ? (
+        
           <div>
             {adding ? <AddBook onDoneAdd={this.handleAddDone}></AddBook> : null}
 
@@ -203,7 +238,7 @@ export class BooksView extends Component {
             <Categories
               categories={categories}
               onFilter={this.handleFilter}
-              current={categories_lookup.get(currentCategory)}
+              current={categoriesLookup.get(currentCategory)}
             />
             {logged && !adding && !editedBook ? (
               <button className="btn btn-warning" onClick={this.handleAdd}>
@@ -211,21 +246,31 @@ export class BooksView extends Component {
               </button>
             ) : null}
 
+
+        <form onSubmit={this.handleSearchSubmit} noValidate>
+          <Input
+            label="Wyszukaj"
+            name="search"
+            value={this.state.searchPhrase}
+            onChange={this.handleSearchEdit}
+            type=""
+          />
+          </form>
+
             <BooksTable
               books={slicedBooks}
-              categories={categories_lookup}
+              categories={categoriesLookup}
               onDelete={this.confirmDelete}
               onEdit={this.handleEdit}
               onSort={this.handleSort}
               onBorrow={this.handleBorrow}
               logged={logged}
+              readers={readers}
             />
           </div>
-        ) : (
-          <h4>Brak książek. Marysia na pewno je doda w przyszłości!</h4>
-        )}
+       
         <Pagination
-          itemsCount={books.length}
+          itemsCount={this.state.totalCount}
           pageSize={pageSize}
           onPageChange={this.handlePageChange}
           currentPage={currentPage}
