@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Input from "./common/input";
 import { editBook } from "../services/bookService";
+import { addBorrowing } from "../services/borrowingService";
 import { getReaders } from "../services/readerService";
 import Select from "react-select";
 
@@ -9,37 +10,48 @@ class BorrowingForm extends Component {
     date: "",
     quantity: 1,
     personId: null,
+    personName: "",
     options: [],
   };
 
   handleSubmit = (e) => {
-    const { date, quantity, personId } = this.state;
+    const { date, quantity, personId, personName } = this.state;
     const { book } = this.props;
     e.preventDefault();
-    console.log("book na poczatku", book);
+    // console.log("book na poczatku", book);
     let borrowingList = book.borrowing;
-    console.log("lista bez nowego", borrowingList);
+    // console.log("lista bez nowego", borrowingList);
     const copiesLeft = book.available - quantity;
-    const newBorrowing = {
-      id: Date.now(),
-      date,
-      quantity,
-      personId,
-      active: true,
-    };
-    borrowingList.push(newBorrowing);
-    console.log("lista po push", borrowingList);
+    // const newBorrowing = {
+    //   id: Date.now(),
+    //   date,
+    //   quantity,
+    //   personId,
+    //   active: true,
+    // };
+    // borrowingList.push(newBorrowing);
+    // console.log("lista po push", borrowingList);
     const editedBook = {
       ...book,
-      borrowing: borrowingList,
+      // borrowing: borrowingList,
       available: copiesLeft,
     };
     console.log("ksiazka po edycji: ", editedBook);
     editBook(editedBook).then((res) => {
       console.log("edited, ", res);
     });
+
+    addBorrowing({
+      bookId: book.id,
+      readerId: personId,
+      readerName: personName,
+      date: date,
+      quantity: quantity,
+    });
+
     this.props.onDoneBorrow(editedBook);
   };
+
   async componentDidMount() {
     this.setState({ book: this.props.book });
     const { data: readers } = await getReaders();
@@ -47,8 +59,8 @@ class BorrowingForm extends Component {
       .sort(function (a, b) {
         return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
       })
-      .map((cat) => {
-        return { value: cat.id, label: cat.name };
+      .map((reader) => {
+        return { value: reader.id, label: reader.name };
       });
     this.setState({ options });
     //NA TAKIEJ SAMEJ ZASADZIE KIEDYŚ USERS...
@@ -61,7 +73,7 @@ class BorrowingForm extends Component {
   };
 
   handleSelect = (e) => {
-    this.setState({ personId: e.value });
+    this.setState({ personId: e.value, personName: e.label });
   };
 
   render() {

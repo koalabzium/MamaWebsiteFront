@@ -5,6 +5,7 @@ import ListGroupItem from "react-bootstrap/ListGroupItem";
 import { confirmAlert } from "react-confirm-alert";
 import { editBook } from "../services/bookService";
 import "react-confirm-alert/src/react-confirm-alert.css";
+import BookBorrowings from "./bookDetails/BookBorrowings";
 
 class BookDetails extends Component {
   state = {
@@ -103,7 +104,7 @@ class BookDetails extends Component {
                           <ListGroupItem>
                             {" "}
                             Wypożyczenia:
-                            {book.borrowing.length > 0 ? (
+                            {/* {book.borrowing.length > 0 ? (
                               <ListGroup>
                                 {book.borrowing.map((b) =>
                                   b.active ? (
@@ -131,7 +132,7 @@ class BookDetails extends Component {
                                   ) : null
                                 )}
                               </ListGroup>
-                            ) : null}
+                            ) : null} */}
                           </ListGroupItem>
                         </ListGroup>
                       ) : null}
@@ -143,6 +144,8 @@ class BookDetails extends Component {
               <div style={{ margin: 20 }}>
                 <span>{book.description}</span>
               </div>
+
+              <BookBorrowings bookId={book.id} />
             </div>
           </Modal.Body>
         </Modal>

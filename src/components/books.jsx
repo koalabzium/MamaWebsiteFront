@@ -32,32 +32,32 @@ export class BooksView extends Component {
     adding: false,
     loaded: false,
     addingCategory: false,
-
-    searchPhrase: ""
+    searchPhrase: "",
+    error: null,
   };
 
-  async reloadBooks (page, categoryId, search) {
+  async reloadBooks(page, categoryId, search) {
+    try {
+      const { data: booksRes } = await getBooks({
+        page,
+        categoryId,
+        search,
+      });
 
-    const {data: booksRes} = await getBooks({
-      page, 
-      categoryId, 
-      search});
-  
-    const {
-      results = [],
-      totalCount = 0
-    } = booksRes
+      const { results = [], totalCount = 0 } = booksRes;
 
-    this.setState({ books: results, loaded: true, totalCount: totalCount });
+      this.setState({ books: results, loaded: true, totalCount: totalCount });
+    } catch (e) {
+      console.error(e.message);
+      this.setState({
+        error: new Error("Nie można pobrać książek :("),
+      });
+    }
   }
 
   async componentDidMount() {
-    const {
-      currentPage,
-      currentCategory,
-      searchPhrase
-    } = this.state
-    this.reloadBooks(currentPage, currentCategory, searchPhrase)
+    const { currentPage, currentCategory, searchPhrase } = this.state;
+    this.reloadBooks(currentPage, currentCategory, searchPhrase);
     const categories = await getCategories();
     const cat = categories.data;
     cat.sort(function (a, b) {
@@ -153,8 +153,8 @@ export class BooksView extends Component {
 
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
-    const {currentCategory, searchPhrase} = this.state
-    this.reloadBooks(page, currentCategory, searchPhrase)
+    const { currentCategory, searchPhrase } = this.state;
+    this.reloadBooks(page, currentCategory, searchPhrase);
   };
 
   handleSort = (column) => {
@@ -169,21 +169,20 @@ export class BooksView extends Component {
 
   handleFilter = (category) => {
     console.log(category);
-    this.reloadBooks(1, category, this.state.searchPhrase)
+    this.reloadBooks(1, category, this.state.searchPhrase);
     this.setState({ currentCategory: category, currentPage: 1 });
   };
 
   handleSearchEdit = (event) => {
     console.log(event.target.value);
-    this.setState({ searchPhrase: event.target.value});
-  };  
+    this.setState({ searchPhrase: event.target.value });
+  };
 
   handleSearchSubmit = (e) => {
     e.preventDefault();
 
-    this.reloadBooks(1, this.state.category, this.state.searchPhrase)
-
-  }
+    this.reloadBooks(1, this.state.category, this.state.searchPhrase);
+  };
 
   myRef = null;
 
@@ -202,10 +201,18 @@ export class BooksView extends Component {
       loaded,
       editedBook,
       borrowedBook,
+      error,
     } = this.state;
     const filtered = books;
     const sorted = _.orderBy(filtered, [sortColumn.name], [sortColumn.order]);
     const slicedBooks = sorted;
+
+    if (error)
+      return (
+        <div>
+          <h2>{error.message}</h2>
+        </div>
+      );
 
     if (loaded === false)
       return (
@@ -213,62 +220,61 @@ export class BooksView extends Component {
           <h2>Ładowanie...</h2>
         </div>
       );
+
     return (
       <React.Fragment>
-        
-          <div>
-            {adding ? <AddBook onDoneAdd={this.handleAddDone}></AddBook> : null}
+        <div>
+          {adding ? <AddBook onDoneAdd={this.handleAddDone}></AddBook> : null}
 
-            {editedBook ? (
-              <UpdateBook
-                book={editedBook}
-                history={this.props.history}
-                onDoneEdit={this.handleEditDone}
-              />
-            ) : null}
-
-            {borrowedBook ? (
-              <BorrowBook
-                book={borrowedBook}
-                history={this.props.history}
-                onDoneBorrow={this.handleBorrowDone}
-              />
-            ) : null}
-
-            <Categories
-              categories={categories}
-              onFilter={this.handleFilter}
-              current={categoriesLookup.get(currentCategory)}
+          {editedBook ? (
+            <UpdateBook
+              book={editedBook}
+              history={this.props.history}
+              onDoneEdit={this.handleEditDone}
             />
-            {logged && !adding && !editedBook ? (
-              <button className="btn btn-warning" onClick={this.handleAdd}>
-                Dodaj książkę
-              </button>
-            ) : null}
+          ) : null}
 
+          {borrowedBook ? (
+            <BorrowBook
+              book={borrowedBook}
+              history={this.props.history}
+              onDoneBorrow={this.handleBorrowDone}
+            />
+          ) : null}
 
-        <form onSubmit={this.handleSearchSubmit} noValidate>
-          <Input
-            label="Wyszukaj"
-            name="search"
-            value={this.state.searchPhrase}
-            onChange={this.handleSearchEdit}
-            type=""
+          <Categories
+            categories={categories}
+            onFilter={this.handleFilter}
+            current={categoriesLookup.get(currentCategory)}
           />
+          {logged && !adding && !editedBook ? (
+            <button className="btn btn-warning" onClick={this.handleAdd}>
+              Dodaj książkę
+            </button>
+          ) : null}
+
+          <form onSubmit={this.handleSearchSubmit} noValidate>
+            <Input
+              label="Wyszukaj"
+              name="search"
+              value={this.state.searchPhrase}
+              onChange={this.handleSearchEdit}
+              type=""
+            />
           </form>
 
-            <BooksTable
-              books={slicedBooks}
-              categories={categoriesLookup}
-              onDelete={this.confirmDelete}
-              onEdit={this.handleEdit}
-              onSort={this.handleSort}
-              onBorrow={this.handleBorrow}
-              logged={logged}
-              readers={readers}
-            />
-          </div>
-       
+          <BooksTable
+            books={slicedBooks}
+            categories={categoriesLookup}
+            onDelete={this.confirmDelete}
+            onEdit={this.handleEdit}
+            onSort={this.handleSort}
+            onBorrow={this.handleBorrow}
+            logged={logged}
+            readers={readers}
+          />
+        </div>
+
         <Pagination
           itemsCount={this.state.totalCount}
           pageSize={pageSize}
