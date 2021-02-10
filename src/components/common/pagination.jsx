@@ -38,7 +38,7 @@ const Pagination = (props) => {
 
 
             <li
-              key={'prev'}
+              key={'next'}
               className={
                 currentPage < pagesCount ? "page-item" : "page-item disabled"
               }
