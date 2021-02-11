@@ -33,11 +33,10 @@ class LoginForm extends Component {
       return;
     }
     try {
-      const { data: jwt } = await login(
-        this.state.account.username,
-        this.state.account.password
-      );
-      localStorage.setItem("token", jwt.token);
+      const {
+        data: { signedToken },
+      } = await login(this.state.account.username, this.state.account.password);
+      localStorage.setItem("token", signedToken);
       this.setState({ errors: null });
       this.props.handleLogin();
     } catch (e) {
