@@ -24,7 +24,7 @@ const BorrowBook = (props) => {
             book={props.book}
             history={props.history}
             onDoneBorrow={props.onDoneBorrow}
-          ></BorrowingForm>
+          />
         </div>
       </div>
     </div>
