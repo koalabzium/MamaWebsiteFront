@@ -15,7 +15,7 @@
     "axios": "^0.19.2",
     "bootstrap": "^4.6.0",
     "image-to-base64": "^2.1.1",
-    "lodash": "^4.17.20",
+    "lodash": "^4.17.21",
     "prop-types": "^15.7.2",
     "react": "^16.14.0",
     "react-bootstrap": "^1.4.3",
