@@ -1,18 +1,18 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 
-const Categories = ({ categories, onFilter }) => {
+const Places = ({ places, onFilter }) => {
   return (
     <Dropdown>
       <Dropdown.Toggle variant="success" id="dropdown-basic">
-        Kategorie
+        Lokalizacje
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
         <Dropdown.Item onClick={() => onFilter(null)}>Wszystkie</Dropdown.Item>
-        {categories.map((cat) => (
-          <Dropdown.Item key={cat.id} onClick={() => onFilter(cat.id)}>
-            {cat.name}
+        {places.map((pl) => (
+          <Dropdown.Item key={pl.id} onClick={() => onFilter(pl.id)}>
+            {pl.name}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>
@@ -20,4 +20,4 @@ const Categories = ({ categories, onFilter }) => {
   );
 };
 
-export default Categories;
+export default Places;

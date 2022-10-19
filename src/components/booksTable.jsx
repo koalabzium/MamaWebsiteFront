@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
 import BookDetails from "./bookDetails";
-import {Spinner} from 'react-bootstrap';
+import { Spinner } from "react-bootstrap";
 
 class BooksTable extends Component {
   state = {
@@ -33,6 +33,7 @@ class BooksTable extends Component {
       onBorrow,
       onSort,
       categories,
+      places,
       logged,
     } = this.props;
 
@@ -123,6 +124,7 @@ class BooksTable extends Component {
           show={current_book && true}
           onHide={() => this.setState({ current_book: null })}
           book={current_book}
+          places={places}
         />
       </div>
     );

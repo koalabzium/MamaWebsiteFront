@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import LoginForm from "./loginForm";
 import ManageCategories from "./manageCategories";
 import ManageReaders from "./manageReaders";
+import ManagePlaces from "./managePlaces";
 
 class AdminPanel extends Component {
   state = {
@@ -41,6 +42,9 @@ class AdminPanel extends Component {
               </div>
               <div className="col">
                 <ManageReaders />
+              </div>
+              <div className="col">
+                <ManagePlaces />
               </div>
             </div>
           </div>
