@@ -56,6 +56,9 @@ class BooksTable extends Component {
               </th>
               <th>Kategoria</th>
               <th>Dostępnych</th>
+              <th className="clickable" onClick={() => onSort("place")}>
+                Lokalizacja
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -116,6 +119,7 @@ class BooksTable extends Component {
                 <td>{book.author}</td>
                 <td>{categories.get(book.category)}</td>
                 <td>{book.available}</td>
+                <td>{places.get(book.place)}</td>
               </tr>
             ))}
           </tbody>

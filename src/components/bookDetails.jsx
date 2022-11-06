@@ -53,7 +53,9 @@ class BookDetails extends Component {
                       </span>
                       {localStorage.getItem("token") ? (
                         <ListGroup>
-                          <ListGroupItem>{book.location}</ListGroupItem>
+                          <ListGroupItem>
+                            Wydawnictwo: {book.location}
+                          </ListGroupItem>
                           <ListGroupItem>
                             Lokalizacja: {places.get(book.place)}
                           </ListGroupItem>
