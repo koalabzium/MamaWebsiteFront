@@ -4,7 +4,9 @@ import {
   deleteReader,
   updateReader,
   addReader,
+  getReadersBorrowings,
 } from "../services/readerService";
+import BorrowingsModal from "./borrowingsModal";
 
 class ManageReaders extends Component {
   state = {
@@ -13,6 +15,7 @@ class ManageReaders extends Component {
     adding: false,
     new_reader: "",
     edited_reader: "",
+    borrowings: null,
   };
 
   async componentDidMount() {
@@ -32,6 +35,17 @@ class ManageReaders extends Component {
     this.setState({ readers });
     await deleteReader(reader.id);
     console.log("usuwanko");
+  };
+
+  handleOpenBorrowingDetails = async (reader) => {
+    const borrowings = await getReadersBorrowings(reader.id);
+    console.log(borrowings.data);
+    this.setState({ borrowings: borrowings.data });
+  };
+
+  onCancelBorrowing = (b) => {
+    const newBorrowings = handleCancelBorrowing(b);
+    this.setState({ borrowings: newBorrowings });
   };
 
   handleAdd = async (e) => {
@@ -105,10 +119,20 @@ class ManageReaders extends Component {
 
                       <td>
                         <button
-                          className="btn btn-danger btn-sm"
+                          className="btn btn-outline-danger btn-sm"
                           onClick={() => this.handleDelete(reader)}
                         >
                           X
+                        </button>
+                      </td>
+                      <td>
+                        <button
+                          className="btn btn-outline-primary btn-sm"
+                          onClick={() =>
+                            this.handleOpenBorrowingDetails(reader)
+                          }
+                        >
+                          O
                         </button>
                       </td>
                     </tr>
@@ -128,6 +152,11 @@ class ManageReaders extends Component {
             </div>
           </div>
         </div>
+        <BorrowingsModal
+          borrowings={this.state.borrowings}
+          onCancelBorrowing={onCancelBorrowing}
+          onHide={() => this.setState({ borrowings: null })}
+        />
       </React.Fragment>
     );
   }
