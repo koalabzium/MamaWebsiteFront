@@ -8,6 +8,7 @@ import {
 } from "../services/readerService";
 import BorrowingsModal from "./borrowingsModal";
 import { handleCancelBorrowing } from "../services/borrowingService";
+import { MenuBook } from "@material-ui/icons/";
 
 class ManageReaders extends Component {
   state = {
@@ -136,7 +137,7 @@ class ManageReaders extends Component {
                             this.handleOpenBorrowingDetails(reader)
                           }
                         >
-                          O
+                          <MenuBook />
                         </button>
                       </td>
                     </tr>

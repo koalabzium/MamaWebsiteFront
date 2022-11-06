@@ -20,7 +20,7 @@ class BorrowingsModal extends Component {
       >
         <Modal.Header closeButton>
           <Modal.Title id="contained-modal-title-vcenter">
-            POZDRO Z VANCOUVER
+            Wypożyczenia
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
