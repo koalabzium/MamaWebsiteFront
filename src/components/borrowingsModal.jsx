@@ -12,7 +12,7 @@ class BorrowingsModal extends Component {
 
     return (
       <Modal
-        {...this.props}
+        onHide={this.props.onHide}
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered

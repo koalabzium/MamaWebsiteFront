@@ -7,6 +7,7 @@ import {
   getReadersBorrowings,
 } from "../services/readerService";
 import BorrowingsModal from "./borrowingsModal";
+import { handleCancelBorrowing } from "../services/borrowingService";
 
 class ManageReaders extends Component {
   state = {
@@ -43,9 +44,12 @@ class ManageReaders extends Component {
     this.setState({ borrowings: borrowings.data });
   };
 
-  onCancelBorrowing = (b) => {
-    const newBorrowings = handleCancelBorrowing(b);
-    this.setState({ borrowings: newBorrowings });
+  onCancelBorrowing = (toDelete) => {
+    handleCancelBorrowing(toDelete).then(() => {
+      this.setState({
+        borrowings: this.state.borrowings.filter((b) => b != toDelete),
+      });
+    });
   };
 
   handleAdd = async (e) => {
@@ -154,7 +158,7 @@ class ManageReaders extends Component {
         </div>
         <BorrowingsModal
           borrowings={this.state.borrowings}
-          onCancelBorrowing={onCancelBorrowing}
+          onCancelBorrowing={this.onCancelBorrowing}
           onHide={() => this.setState({ borrowings: null })}
         />
       </React.Fragment>
