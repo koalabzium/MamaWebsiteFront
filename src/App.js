@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./App.css";
-import { Route, Redirect, Switch } from "react-router-dom";
+import {Route, Routes, Navigate} from "react-router-dom"
 import BooksView from "./components/books";
 import Navigation from "./components/naviagtion";
 import AdminPanel from "./components/adminPanel";
@@ -15,15 +15,15 @@ class App extends Component {
       <React.Fragment>
         <Navigation />
         <main className="container m-3">
-          <Switch>
-            <Route path={`/books`} exact component={BooksView}></Route>
-            <Route path={`/admin`} component={AdminPanel}></Route>
-            <Route path={`/edit/:title`} component={UpdateBook}></Route>
+          <Routes>
+            <Route path={'/books'} exact element={<BooksView/>}/>
+            <Route path={'/admin'} element={<AdminPanel/>}/>
+            <Route path={'/edit/:title'} element={<UpdateBook/>}/>
 
-            <Route path={`/not-found`} component={NotFound}></Route>
-            <Redirect from={`/`} exact to={`/books`} />
-            <Redirect to={`/not-found`} />
-          </Switch>
+            <Route path={'/not-found'} element={<NotFound/>}/>
+
+            <Route path={'/'} element={<Navigate to="/books" />} />
+          </Routes>
         </main>
       </React.Fragment>
     );
