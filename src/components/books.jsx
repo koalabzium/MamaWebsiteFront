@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Pagination from "./common/pagination";
 import BooksTable from "./booksTable";
 import Categories from "./categories";
-import { getBooks, deleteBook } from "../services/bookService";
+import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
 import AddBook from "./addBook";
@@ -12,7 +12,8 @@ import "react-confirm-alert/src/react-confirm-alert.css";
 import { getReaders } from "../services/readerService";
 import { Alert, Spinner } from "react-bootstrap";
 import { getPlaces } from "../services/placeService";
-import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
+import BookDetails from "./bookDetails";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 const PAGE_SIZE = 10;
 
@@ -37,8 +38,27 @@ const BooksView = (props) => {
   const [searchPhrase, setSearchPhrase] = useState("");
   const [error, setError] = useState(null);
   const [readers, setReaders] = useState(new Map());
+  const [currentBook, setCurrentBook] = useState(null);
 
   const logged = localStorage.getItem("token");
+
+  const [search, setSearch] = useSearchParams()
+  const navigate = useNavigate();
+
+  const bookId = search.get("bookId")
+
+  useEffect(() => {
+    if (!bookId) {
+      setCurrentBook(null);
+    } else {
+      const fetchCurrentBook = async () => {
+        const { data: bookRes } = await getBook(bookId);
+        setCurrentBook(bookRes);
+      };
+
+      fetchCurrentBook();
+    }
+  }, [bookId])
 
   const reloadBooks = async (page, categoryId, search, sortColumn) => {
     setLoading(true);
@@ -64,7 +84,7 @@ const BooksView = (props) => {
     }
   }
 
-  useEffect(async () => {
+  const fetchAllData = async () => {
     reloadBooks(currentPage, currentCategory, searchPhrase, sortColumn);
     const { data: cat } = await getCategories();
     const { data: pl } = await getPlaces();
@@ -89,6 +109,10 @@ const BooksView = (props) => {
     pl.map((pl) => lookup2.set(pl.id, pl.name));
 
     setPlacesLookup(lookup2);
+  }
+
+  useEffect(() => {
+    fetchAllData();
   }, [])
 
   const confirmDelete = (book) => {
@@ -202,6 +226,12 @@ const BooksView = (props) => {
     await reloadBooks(1, currentCategory, searchPhrase, sortColumn);
   };
 
+  const hideSelectedBook = () => {
+    search.delete("bookId")
+
+    navigate({ search: search.toString() })
+  }
+
   return (
     <React.Fragment>
       <div>
@@ -290,6 +320,7 @@ const BooksView = (props) => {
           onEdit={handleEdit}
           onSort={handleSort}
           onBorrow={handleBorrow}
+          onClick={book => setSearch({ bookId: book.id })}
           logged={logged}
           readers={readers}
           loading={loading}
@@ -302,8 +333,15 @@ const BooksView = (props) => {
         onPageChange={handlePageChange}
         currentPage={currentPage}
       />
+
+      <BookDetails
+        show={!!currentBook}
+        onHide={hideSelectedBook}
+        book={currentBook}
+        places={placesLookup}
+      />
     </React.Fragment>
   );
 }
 
-export default withRouter(BooksView);
+export default BooksView;
