@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
 import BookDetails from "./bookDetails";
-import { Spinner } from "react-bootstrap";
 
 class BooksTable extends Component {
   state = {

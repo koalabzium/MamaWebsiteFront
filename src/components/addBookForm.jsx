@@ -229,12 +229,8 @@ class AddBookForm extends Component {
 
   render() {
     const {
-      categories,
       options,
       placesOptions,
-      places,
-      available,
-      image,
       title,
       author,
       description,
@@ -243,8 +239,6 @@ class AddBookForm extends Component {
       location,
       categoryId,
       placeId,
-      editing,
-      addingCategory,
       minQuantity,
       image_link,
       error,
