@@ -32,44 +32,53 @@ class BookDetails extends Component {
             <div>
               <div className="container">
                 <div className="row">
-                  <div className="col-sm">
+                  <div className="col-sm" style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
                     <img
                       src={book.image}
-                      width="300"
-                      height="400"
-                      style={{ objectFit: "contain", marginBottom: 15 }}
+                      style={{
+                        objectFit: 'contain',
+                        flexShrink: 0,
+                        minWidth: '100%',
+                        minHeight: '100%',
+                        maxHeight: 400
+                      }}
+                      alt={book.title}
                     />
                   </div>
-                  <div className="col-sm">
-                    <div style={{ display: "flex", flexDirection: "column" }}>
-                      <span>
-                        <h2>{book.title}</h2>
-                      </span>
-                      <span>
-                        <h4 style={{ color: "#585858" }}>{book.author}</h4>
-                      </span>
-                      <span>
-                        <a href={book.link}>Strona z książką</a>
-                      </span>
-                      {localStorage.getItem("token") ? (
-                        <ListGroup>
-                          <ListGroupItem>
-                            Wydawnictwo: {book.location}
-                          </ListGroupItem>
-                          <ListGroupItem>
-                            Lokalizacja: {places.get(book.place)}
-                          </ListGroupItem>
-                          <ListGroupItem>
-                            Ilość egzemplarzy: {book.quantity}
-                          </ListGroupItem>
-                          <ListGroupItem>
-                            {" "}
-                            Wypożyczenia:
-                            <BookBorrowings bookId={book.id} />
-                          </ListGroupItem>
-                        </ListGroup>
-                      ) : null}
-                    </div>
+                  <div className="col-sm" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                    <span>
+                      <h2>{book.title}</h2>
+                    </span>
+                    <span>
+                      <h4 style={{ color: "#585858" }}>{book.author}</h4>
+                    </span>
+                    <span>
+                      <a href={book.link}>Strona z książką</a>
+                    </span>
+                    {localStorage.getItem("token") ? (
+                      <ListGroup>
+                        <ListGroupItem>
+                          Wydawnictwo: {book.location}
+                        </ListGroupItem>
+                        <ListGroupItem>
+                          Lokalizacja: {places.get(book.place)}
+                        </ListGroupItem>
+                        <ListGroupItem>
+                          Ilość egzemplarzy: {book.quantity}
+                        </ListGroupItem>
+                        <ListGroupItem>
+                          {" "}
+                          Wypożyczenia:
+                          <BookBorrowings bookId={book.id} />
+                        </ListGroupItem>
+                      </ListGroup>
+                    ) : null}
                   </div>
                 </div>
               </div>
