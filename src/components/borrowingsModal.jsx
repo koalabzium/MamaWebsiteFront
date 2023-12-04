@@ -1,10 +1,6 @@
 import React, { Component } from "react";
 import Modal from "react-bootstrap/Modal";
-import ListGroup from "react-bootstrap/ListGroup";
-import ListGroupItem from "react-bootstrap/ListGroupItem";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import BookBorrowings from "./bookDetails/BookBorrowings";
-import { handleCancelBorrowing } from "../services/borrowingService";
 
 class BorrowingsModal extends Component {
   render() {

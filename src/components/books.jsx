@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Pagination from "./common/pagination";
 import BooksTable from "./booksTable";
 import Categories from "./categories";
@@ -14,10 +14,11 @@ import { Alert, Spinner } from "react-bootstrap";
 import { getPlaces } from "../services/placeService";
 import { withRouter } from "react-router-dom/cjs/react-router-dom.min";
 
+const PAGE_SIZE = 10;
+
 const BooksView = (props) => {
 
   const [books, setBooks] = useState([]);
-  const [pageSize, setPageSize] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [sortColumn, setSortColumn] = useState({
@@ -29,15 +30,15 @@ const BooksView = (props) => {
   const [currentCategory, setCurrentCategory] = useState(null);
   const [categoriesLookup, setCategoriesLookup] = useState(new Map());
   const [placesLookup, setPlacesLookup] = useState(new Map());
-  const [logged, setLogged] = useState(localStorage.getItem("token"));
   const [editedBook, setEditedBook] = useState(null);
   const [borrowedBook, setBorrowedBook] = useState(null);
   const [adding, setAdding] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [addingCategory, setAddingCategory] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [error, setError] = useState(null);
   const [readers, setReaders] = useState(new Map());
+
+  const logged = localStorage.getItem("token");
 
   const reloadBooks = async (page, categoryId, search, sortColumn) => {
     setLoading(true);
@@ -297,7 +298,7 @@ const BooksView = (props) => {
 
       <Pagination
         itemsCount={totalCount}
-        pageSize={pageSize}
+        pageSize={PAGE_SIZE}
         onPageChange={handlePageChange}
         currentPage={currentPage}
       />

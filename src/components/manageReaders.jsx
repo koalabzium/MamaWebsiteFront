@@ -48,7 +48,7 @@ class ManageReaders extends Component {
   onCancelBorrowing = (toDelete) => {
     handleCancelBorrowing(toDelete).then(() => {
       this.setState({
-        borrowings: this.state.borrowings.filter((b) => b != toDelete),
+        borrowings: this.state.borrowings.filter((b) => b !== toDelete),
       });
     });
   };
