@@ -3,9 +3,6 @@ import PropTypes from "prop-types";
 import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
 
 const BooksTable = (props) => {
-  const deleteBorrowing = (book, borrowing_id) => {
-    console.log(book, borrowing_id);
-  };
 
   const stopPropagationAndCall = (func) => (e) => {
     e.stopPropagation();

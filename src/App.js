@@ -14,7 +14,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <Navigation />
-        <main className="container m-3">
+        <main className="m-1">
           <Routes>
             <Route path={'/books'} exact element={<BooksView/>}/>
             <Route path={'/admin'} element={<AdminPanel/>}/>

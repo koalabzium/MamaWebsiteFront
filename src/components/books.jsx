@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import Pagination from "./common/pagination";
 import BooksTable from "./booksTable";
 import Categories from "./categories";
