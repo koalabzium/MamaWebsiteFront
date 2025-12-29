@@ -1,9 +1,21 @@
 import React from "react";
 import AddBookForm from "./addBookForm";
+import { useNavigate } from "react-router-dom";
 
-const AddBook = (props) => {
+const AddBookScreen = () => {
+
+  const navigate = useNavigate();
+
+  const onClose = () => {
+    navigate("/books");
+  };
+
+  const onDone = (book) => {
+    navigate(`/books?bookId=${book.id}`);
+  };
+
   return (
-    <div style={{ padding: 20 }}>
+    <div className="m-1">
       <div className="card">
         <div className="card-body">
           <h2>
@@ -12,20 +24,18 @@ const AddBook = (props) => {
               type="button"
               className="close"
               aria-label="Close"
-              onClick={(book) => {
-                console.log("QUIT");
-                props.onDoneAdd(null);
-              }}
+              onClick={onClose}
             >
               <span aria-hidden="true">&times;</span>
             </button>
           </h2>
 
-          <AddBookForm onDoneAdd={props.onDoneAdd} />
+          <AddBookForm
+            onDoneAdd={onDone} />
         </div>
       </div>
     </div>
   );
 };
 
-export default AddBook;
+export default AddBookScreen;

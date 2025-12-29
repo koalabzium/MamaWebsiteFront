@@ -5,7 +5,6 @@ import Categories from "./categories";
 import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
-import AddBook from "./addBook";
 import BorrowBook from "./borrowBook";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
@@ -33,7 +32,6 @@ const BooksView = (props) => {
   const [placesLookup, setPlacesLookup] = useState(new Map());
   const [editedBook, setEditedBook] = useState(null);
   const [borrowedBook, setBorrowedBook] = useState(null);
-  const [adding, setAdding] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [error, setError] = useState(null);
@@ -139,7 +137,6 @@ const BooksView = (props) => {
   const handleEdit = (book) => {
     console.log("Editing");
 
-    setAdding(false);
     setBorrowedBook(null);
     setEditedBook(book);
     window.scrollTo(0, 0);
@@ -162,20 +159,11 @@ const BooksView = (props) => {
   };
 
   const handleAdd = () => {
-    setAdding(true);
-    window.scrollTo(0, 0); // props.history.push("/new-book");
+    navigate("/books/add");
   };
 
-  const handleAddDone = (book) => {
-    if (book) {
-      setBooks([...books, book]);
-    }
-
-    setAdding(false);
-  };
 
   const handleBorrow = (book) => {
-    setAdding(false);
     setEditedBook(false);
     setBorrowedBook(book);
     window.scrollTo(0, 0);
@@ -235,8 +223,6 @@ const BooksView = (props) => {
   return (
     <React.Fragment>
       <div>
-        {adding && <AddBook onDoneAdd={handleAddDone} />}
-
         {editedBook && (
           <UpdateBook
             book={editedBook}
@@ -269,7 +255,7 @@ const BooksView = (props) => {
           </div>
 
           <div>
-            {logged && !adding && !editedBook && (
+            {logged && !editedBook && (
               <button
                 className="btn btn-warning form-element"
                 onClick={handleAdd}

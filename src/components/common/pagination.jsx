@@ -15,7 +15,6 @@ const Pagination = (props) => {
   const pagesToShow = pagesEnd - pagesStart;
   const pages = [...Array(pagesToShow).keys()].map((i) => pagesStart + i + 1);
 
-  console.log(pages);
   return (
     <React.Fragment>
       <nav aria-label="Page navigation example">
