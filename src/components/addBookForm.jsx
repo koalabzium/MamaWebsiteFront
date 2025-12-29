@@ -138,8 +138,7 @@ class AddBookForm extends Component {
       console.log("Dodawaaanieee");
       addBook({ ...editedBook, image: to_save_image })
         .then((res) => {
-          console.log(res);
-          this.props.onDoneAdd(res.data.message);
+          this.props.onDoneAdd(res.data);
         })
         .catch((err) => {
           console.warn(err.message);
@@ -169,15 +168,6 @@ class AddBookForm extends Component {
       // });
       // myFileItemReader.readAsDataURL(currentFile);
     }
-  };
-
-  handlePictureCrop = (image) => {
-    this.setState({ image });
-  };
-
-  handleAddCategory = () => {
-    this.setState({ addingCategory: true });
-    console.log("Dodawanie kategorii");
   };
 
   componentWillReceiveProps(nextProps) {
@@ -220,7 +210,7 @@ class AddBookForm extends Component {
       .map((pl) => {
         return { value: pl.id, label: pl.name };
       });
-    console.log(options);
+    // console.log(options);
     this.setState({ options });
     this.setState({ categories });
     this.setState({ places });
