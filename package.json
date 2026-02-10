@@ -1,6 +1,7 @@
 {
   "name": "mama-library",
   "version": "0.1.0",
+  "homepage": "https://koalabzium.github.io/MamaWebsiteFront",
   "private": true,
   "engines": {
     "node": "24.x"
@@ -54,5 +55,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0"
   }
 }
