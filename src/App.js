@@ -3,6 +3,7 @@ import "./App.css";
 import {Route, Routes, Navigate} from "react-router-dom"
 import BooksView from "./components/books";
 import AddBookScreen from "./components/AddBookScreen";
+import UpdateBookScreen from "./components/updateBook";
 import Navigation from "./components/naviagtion";
 import AdminPanel from "./components/adminPanel";
 import NotFound from "./components/notFound";
@@ -19,6 +20,7 @@ class App extends Component {
           <Routes>
             <Route path={'/books'} exact element={<BooksView/>}/>
             <Route path={'/books/add'} exact element={<AddBookScreen/>}/>
+            <Route path={'/books/edit'} exact element={<AddBookScreen/>}/>
             <Route path={'/admin'} element={<AdminPanel/>}/>
             <Route path={'/edit/:title'} element={<UpdateBook/>}/>
 

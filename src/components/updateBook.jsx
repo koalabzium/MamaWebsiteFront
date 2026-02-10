@@ -1,7 +1,7 @@
 import React from "react";
 import AddBookForm from "./addBookForm";
 
-const UpdateBook = (props) => {
+const UpdateBookScreen = (props) => {
   return (
     <div style={{ padding: 20 }}>
       <div className="card">
@@ -31,4 +31,4 @@ const UpdateBook = (props) => {
   );
 };
 
-export default UpdateBook;
+export default UpdateBookScreen;
