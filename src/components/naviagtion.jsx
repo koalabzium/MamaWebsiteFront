@@ -1,15 +1,13 @@
 import React, { Component } from "react";
 import { Navbar, Form, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 class Navigation extends Component {
   render() {
     return (
       <React.Fragment>
         <Navbar sticky="top" bg="light" expand="lg">
-          <Navbar.Brand
-            // href={`https://koalabzium.github.io/MamaWebsiteFront/books`}
-            href={`/`}
-          >
+          <Navbar.Brand as={Link} to="/">
             Biblioteka
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -23,7 +21,7 @@ class Navigation extends Component {
               </Nav.Link>
             </Nav> */}
             <Form inline>
-              <Button variant="outline-dark" href={`/admin`}>
+              <Button as={Link} variant="outline-dark" to="/admin">
                 Panel adminki
               </Button>
             </Form>
