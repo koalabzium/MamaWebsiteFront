@@ -20,6 +20,10 @@ jobs:
       - name: Build (staging)
         env:
           REACT_APP_API_URL: https://europe-west1-mamusialibrary-staging.cloudfunctions.net/appEurope/
+          # package.json's "homepage" is the GitHub Pages path (/MamaWebsiteFront),
+          # which CRA otherwise bakes into every asset URL. Firebase Hosting serves
+          # from the root, so override it back to "/" for this build only.
+          PUBLIC_URL: /
           CI: false
         run: npm run build
 
