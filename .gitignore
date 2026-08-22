@@ -13,6 +13,9 @@ src/apiURL.json
 # production
 /build
 
+# Firebase CLI local cache/deploy history
+.firebase/
+
 # misc
 .DS_Store
 .env.local
