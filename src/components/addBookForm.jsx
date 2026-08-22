@@ -85,7 +85,12 @@ const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
   };
 
   const handleChange = (e) => {
-    setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    // Read the SyntheticEvent's fields synchronously — React 16 pools and
+    // nullifies them right after this handler returns, so referencing
+    // e.target lazily inside the setState updater below (which can run
+    // after that pooling reset) would intermittently throw.
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelect = (e) => setForm((prev) => ({ ...prev, categoryId: e.value }));
