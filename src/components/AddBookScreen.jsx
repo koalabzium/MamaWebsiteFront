@@ -11,7 +11,9 @@ const AddBookScreen = () => {
   };
 
   const onDone = (book) => {
-    navigate(`/books?bookId=${book.id}`);
+    // Same primitive useBooksQueryState builds on (URLSearchParams), so both
+    // ways of landing on a book's detail modal stay consistent.
+    navigate(`/books?${new URLSearchParams({ bookId: book.id }).toString()}`);
   };
 
   return (
