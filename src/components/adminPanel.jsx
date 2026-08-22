@@ -1,62 +1,38 @@
-import React, { Component } from "react";
+import React from "react";
 import LoginForm from "./loginForm";
 import ManageCategories from "./manageCategories";
 import ManageReaders from "./manageReaders";
 import ManagePlaces from "./managePlaces";
+import useAuth from "../hooks/useAuth";
 
-class AdminPanel extends Component {
-  state = {
-    logged_in: false,
-  };
+const AdminPanel = () => {
+  const { isLoggedIn, login, logout } = useAuth();
 
-  componentDidMount() {
-    const jwt = localStorage.getItem("token");
-    if (jwt) {
-      this.setState({ logged_in: true });
-    } else {
-      this.setState({ logged_in: false });
-    }
-  }
-
-  handleLogin = () => {
-    this.setState({ logged_in: true });
-  };
-
-  handleLogout = () => {
-    localStorage.removeItem("token");
-    this.setState({ logged_in: false });
-  };
-
-  render() {
-    return (
-      <div>
-        {this.state.logged_in ? (
-          <div>
-            <h1>Witaj Marysiu!</h1>
-            <button onClick={this.handleLogout} className="btn btn-primary">
-              Wyloguj się
-            </button>
-            <div className="row">
-              <div className="col">
-                <ManageCategories />
-              </div>
-              <div className="col">
-                <ManageReaders />
-              </div>
-              <div className="col">
-                <ManagePlaces />
-              </div>
+  return (
+    <div>
+      {isLoggedIn ? (
+        <div>
+          <h1>Witaj Marysiu!</h1>
+          <button onClick={logout} className="btn btn-primary">
+            Wyloguj się
+          </button>
+          <div className="row">
+            <div className="col">
+              <ManageCategories />
+            </div>
+            <div className="col">
+              <ManageReaders />
+            </div>
+            <div className="col">
+              <ManagePlaces />
             </div>
           </div>
-        ) : (
-          <LoginForm
-            history={this.props.history}
-            handleLogin={this.handleLogin}
-          />
-        )}
-      </div>
-    );
-  }
-}
+        </div>
+      ) : (
+        <LoginForm onLogin={login} />
+      )}
+    </div>
+  );
+};
 
 export default AdminPanel;

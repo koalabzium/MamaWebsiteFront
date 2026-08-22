@@ -2,116 +2,118 @@ import React, { useState, useEffect } from "react";
 import Pagination from "./common/pagination";
 import BooksTable from "./booksTable";
 import Categories from "./categories";
+import Places from "./places";
 import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
 import BorrowBook from "./borrowBook";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { getReaders } from "../services/readerService";
 import { Alert, Spinner } from "react-bootstrap";
 import { getPlaces } from "../services/placeService";
 import BookDetails from "./bookDetails";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import useBooksQueryState from "../hooks/useBooksQueryState";
 
 const PAGE_SIZE = 10;
+const sortByName = (a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0);
 
-const BooksView = (props) => {
+const BooksView = () => {
+  const { isLoggedIn: logged } = useAuth();
+  const navigate = useNavigate();
+  const { q, category, place, sortBy, order, page, bookId, setQuery } =
+    useBooksQueryState();
 
   const [books, setBooks] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [sortColumn, setSortColumn] = useState({
-    name: "title",
-    order: "asc",
-  });
   const [categories, setCategories] = useState([]);
   const [places, setPlaces] = useState([]);
-  const [currentCategory, setCurrentCategory] = useState(null);
   const [categoriesLookup, setCategoriesLookup] = useState(new Map());
   const [placesLookup, setPlacesLookup] = useState(new Map());
   const [editedBook, setEditedBook] = useState(null);
   const [borrowedBook, setBorrowedBook] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [searchPhrase, setSearchPhrase] = useState("");
   const [error, setError] = useState(null);
-  const [readers, setReaders] = useState(new Map());
   const [currentBook, setCurrentBook] = useState(null);
 
-  const logged = localStorage.getItem("token");
+  // The search box keeps its own draft value — only submitting the form
+  // pushes it into the URL (and thus triggers a fetch), matching the
+  // original "type then press Enter/Szukaj" UX rather than searching on
+  // every keystroke.
+  const [searchInput, setSearchInput] = useState(q);
 
-  const [search, setSearch] = useSearchParams()
-  const navigate = useNavigate();
+  // Reference data (categories/places dropdowns, lookups by id) — fetched
+  // once, independent of the filtered/sorted/paginated book list itself.
+  useEffect(() => {
+    const loadReferenceData = async () => {
+      const { data: cats } = await getCategories();
+      const { data: pls } = await getPlaces();
+      const sortedCats = [...cats].sort(sortByName);
+      const sortedPlaces = [...pls].sort(sortByName);
 
-  const bookId = search.get("bookId")
+      setCategories(sortedCats);
+      setPlaces(sortedPlaces);
+      setCategoriesLookup(new Map(sortedCats.map((c) => [c.id, c.name])));
+      setPlacesLookup(new Map(sortedPlaces.map((p) => [p.id, p.name])));
+    };
+    loadReferenceData();
+  }, []);
 
+  // The book list itself — re-fetches whenever any part of the URL-backed
+  // query state changes. This is the single place page/filter/sort/search
+  // turn into an actual request, replacing the old
+  // reloadBooks(page, categoryId, search, sortColumn) call threaded
+  // manually through every handler.
+  useEffect(() => {
+    let cancelled = false;
+    const reload = async () => {
+      setLoading(true);
+      try {
+        const { data: booksRes } = await getBooks({
+          page,
+          categoryId: category,
+          placeId: place,
+          search: q,
+          sortBy,
+          order,
+        });
+        if (cancelled) return;
+        const { results = [], totalCount: count = 0 } = booksRes;
+        setBooks(results);
+        setTotalCount(count);
+        setError(null);
+      } catch (e) {
+        if (cancelled) return;
+        console.error(e.message);
+        setError(new Error("Nie można pobrać książek :("));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    reload();
+    return () => {
+      cancelled = true;
+    };
+  }, [page, category, place, q, sortBy, order]);
+
+  // The selected book detail modal — URL-backed via bookId, so it survives
+  // a refresh and can be linked to directly.
   useEffect(() => {
     if (!bookId) {
       setCurrentBook(null);
-    } else {
-      const fetchCurrentBook = async () => {
-        const { data: bookRes } = await getBook(bookId);
-        setCurrentBook(bookRes);
-      };
-
-      fetchCurrentBook();
+      return;
     }
-  }, [bookId])
+    let cancelled = false;
+    getBook(bookId).then(({ data }) => {
+      if (!cancelled) setCurrentBook(data);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [bookId]);
 
-  const reloadBooks = async (page, categoryId, search, sortColumn) => {
-    setLoading(true);
-    try {
-      const { data: booksRes } = await getBooks({
-        page,
-        categoryId,
-        search,
-        sortBy: sortColumn.name,
-        order: sortColumn.order,
-      });
-
-      const { results = [], totalCount = 0 } = booksRes;
-
-      setBooks(results);
-      setLoading(false);
-      setTotalCount(totalCount);
-    } catch (e) {
-      console.error(e.message);
-
-      setLoading(false);
-      setError(new Error("Nie można pobrać książek :("));
-    }
-  }
-
-  const fetchAllData = async () => {
-    reloadBooks(currentPage, currentCategory, searchPhrase, sortColumn);
-    const { data: cat } = await getCategories();
-    const { data: pl } = await getPlaces();
-    cat.sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0));
-
-    setCategories(cat);
-    setPlaces(pl);
-
-    const readersData = await getReaders();
-    const readers = new Map();
-    readersData.data.map((r) => readers.set(r.id, r.name));
-
-    setReaders(readers)
-
-    const lookup = new Map();
-    cat.map((cat) => lookup.set(cat.id, cat.name));
-
-    setCategoriesLookup(lookup);
-
-
-    const lookup2 = new Map();
-    pl.map((pl) => lookup2.set(pl.id, pl.name));
-
-    setPlacesLookup(lookup2);
-  }
-
-  useEffect(() => {
-    fetchAllData();
-  }, [])
+  const hideSelectedBook = () => setQuery({ bookId: null });
 
   const confirmDelete = (book) => {
     confirmAlert({
@@ -127,16 +129,12 @@ const BooksView = (props) => {
   };
 
   const handleDelete = async (book) => {
-    console.log("Deleting", book);
-    const books = books.filter((b) => b.id !== book.id);
-    console.log(books);
-    setBooks(books);
+    const remainingBooks = books.filter((b) => b.id !== book.id);
+    setBooks(remainingBooks);
     deleteBook(book.id);
   };
 
   const handleEdit = (book) => {
-    console.log("Editing");
-
     setBorrowedBook(null);
     setEditedBook(book);
     window.scrollTo(0, 0);
@@ -144,99 +142,43 @@ const BooksView = (props) => {
 
   const handleEditDone = (book) => {
     if (book) {
-      let tmpBooks = [];
-      books.forEach((b) => {
-        if (b.id === book.id) {
-          tmpBooks.push(book);
-        } else {
-          tmpBooks.push(b);
-        }
-      });
-
-      setBooks(tmpBooks);
+      setBooks((prev) => prev.map((b) => (b.id === book.id ? book : b)));
     }
-    setEditedBook(null)
+    setEditedBook(null);
   };
 
-  const handleAdd = () => {
-    navigate("/books/add");
-  };
-
+  const handleAdd = () => navigate("/books/add");
 
   const handleBorrow = (book) => {
-    setEditedBook(false);
+    setEditedBook(null);
     setBorrowedBook(book);
     window.scrollTo(0, 0);
-    console.log("handleBorrow", book);
   };
 
-  const handleBorrowDone = (book) => {
-    if (book) {
-      console.log("Wypożyczona");
-    }
+  const handleBorrowDone = () => setBorrowedBook(null);
 
-    setBorrowedBook(null);
+  const handlePageChange = (newPage) => setQuery({ page: newPage });
+
+  const handleSort = (column) => {
+    const newOrder = sortBy === column && order === "asc" ? "desc" : "asc";
+    setQuery({ sortBy: column, order: newOrder, page: 1 });
   };
 
-  const handlePageChange = async (page) => {
-    setCurrentPage(page);
-    await reloadBooks(page, currentCategory, searchPhrase, sortColumn);
-  };
+  const handleFilter = (categoryId) => setQuery({ category: categoryId, page: 1 });
+  const handlePlaceFilter = (placeId) => setQuery({ place: placeId, page: 1 });
 
-  const handleSort = async (column) => {
-    let tmpSort = sortColumn;
-    if (tmpSort.name === column) {
-      tmpSort.order = tmpSort.order === "asc" ? "desc" : "asc";
-    } else {
-      tmpSort = { name: column, order: "asc" };
-    }
-
-    await reloadBooks(1, currentCategory, searchPhrase, tmpSort);
-
-    setSortColumn(tmpSort);
-    setCurrentPage(1);
-  };
-
-  const handleFilter = async (category) => {
-    console.log(category);
-    await reloadBooks(1, category, searchPhrase, sortColumn);
-    setCurrentCategory(category);
-    setCurrentPage(1);
-  };
-
-  const handleSearchEdit = (event) => {
-    console.log(event.target.value);
-    setSearchPhrase(event.target.value)
-  };
-
-  const handleSearchSubmit = async (e) => {
+  const handleSearchSubmit = (e) => {
     e.preventDefault();
-    await reloadBooks(1, currentCategory, searchPhrase, sortColumn);
+    setQuery({ q: searchInput, page: 1 });
   };
-
-  const hideSelectedBook = () => {
-    search.delete("bookId")
-
-    navigate({ search: search.toString() })
-  }
 
   return (
     <React.Fragment>
       <div>
-        {editedBook && (
-          <UpdateBook
-            book={editedBook}
-            history={props.history}
-            onDoneEdit={handleEditDone}
-          />
-        )}
+        {editedBook && <UpdateBook book={editedBook} onDoneEdit={handleEditDone} />}
 
         {borrowedBook && (
-          <BorrowBook
-            book={borrowedBook}
-            history={props.history}
-            onDoneBorrow={handleBorrowDone}
-          />
+          <BorrowBook book={borrowedBook} onDoneBorrow={handleBorrowDone} />
         )}
 
         <div style={{ display: "flex", alignItems: "center" }}>
@@ -244,22 +186,22 @@ const BooksView = (props) => {
             <Categories
               categories={categories}
               onFilter={handleFilter}
-              current={categoriesLookup.get(currentCategory)}
+              current={categoriesLookup.get(category)}
             />
           </div>
 
           <div className={"form-element"}>
-            {currentCategory && (
-              <h6>{categoriesLookup.get(currentCategory)}</h6>
-            )}
+            <Places places={places} onFilter={handlePlaceFilter} />
+          </div>
+
+          <div className={"form-element"}>
+            {category && <h6>{categoriesLookup.get(category)}</h6>}
+            {place && <h6>{placesLookup.get(place)}</h6>}
           </div>
 
           <div>
             {logged && !editedBook && (
-              <button
-                className="btn btn-warning form-element"
-                onClick={handleAdd}
-              >
+              <button className="btn btn-warning form-element" onClick={handleAdd}>
                 Dodaj książkę
               </button>
             )}
@@ -276,8 +218,8 @@ const BooksView = (props) => {
               <input
                 placeholder="Wyszukaj"
                 name="search"
-                value={searchPhrase}
-                onChange={handleSearchEdit}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 type=""
               />
             </div>
@@ -291,9 +233,7 @@ const BooksView = (props) => {
         {error && <Alert variant={"danger"}>{error.message}</Alert>}
 
         {loading && (
-          <div
-            style={{ display: "flex", justifyContent: "center", padding: 5 }}
-          >
+          <div style={{ display: "flex", justifyContent: "center", padding: 5 }}>
             <Spinner animation="border" />
           </div>
         )}
@@ -306,10 +246,8 @@ const BooksView = (props) => {
           onEdit={handleEdit}
           onSort={handleSort}
           onBorrow={handleBorrow}
-          onClick={book => setSearch({ bookId: book.id })}
+          onClick={(book) => setQuery({ bookId: book.id })}
           logged={logged}
-          readers={readers}
-          loading={loading}
         />
       </div>
 
@@ -317,7 +255,7 @@ const BooksView = (props) => {
         itemsCount={totalCount}
         pageSize={PAGE_SIZE}
         onPageChange={handlePageChange}
-        currentPage={currentPage}
+        currentPage={page}
       />
 
       <BookDetails
@@ -328,6 +266,6 @@ const BooksView = (props) => {
       />
     </React.Fragment>
   );
-}
+};
 
 export default BooksView;
