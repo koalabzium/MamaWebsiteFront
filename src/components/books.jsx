@@ -127,10 +127,8 @@ const BooksView = (props) => {
   };
 
   const handleDelete = async (book) => {
-    console.log("Deleting", book);
-    const books = books.filter((b) => b.id !== book.id);
-    console.log(books);
-    setBooks(books);
+    const remainingBooks = books.filter((b) => b.id !== book.id);
+    setBooks(remainingBooks);
     deleteBook(book.id);
   };
 
