@@ -1,94 +1,79 @@
-import React, {Component} from "react";
+import React, { useState, useEffect } from "react";
 import Input from "./common/input";
-import {addBorrowing} from "../services/borrowingService";
-import {getReaders} from "../services/readerService";
+import { addBorrowing } from "../services/borrowingService";
+import { getReaders } from "../services/readerService";
 import Select from "react-select";
 
-class BorrowingForm extends Component {
-    state = {
-        date: "",
-        quantity: 1,
-        personId: null,
-        personName: "",
-        options: [],
+const BorrowingForm = ({ book, onDoneBorrow }) => {
+  const [date, setDate] = useState("");
+  const [quantity, setQuantity] = useState(1);
+  const [personId, setPersonId] = useState(null);
+  const [personName, setPersonName] = useState("");
+  const [options, setOptions] = useState([]);
+
+  useEffect(() => {
+    const loadReaders = async () => {
+      const { data: readers } = await getReaders();
+      const sorted = readers
+        .sort((a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0))
+        .map((reader) => ({ value: reader.id, label: reader.name }));
+      setOptions(sorted);
     };
+    loadReaders();
+  }, []);
 
-    handleSubmit = (e) => {
-        const {date, quantity, personId, personName} = this.state;
-        const {book} = this.props;
-        e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
+    addBorrowing({
+      bookId: book.id,
+      readerId: personId,
+      readerName: personName,
+      date,
+      quantity,
+    });
 
-        addBorrowing({
-            bookId: book.id,
-            readerId: personId,
-            readerName: personName,
-            date: date,
-            quantity: quantity,
-        });
+    onDoneBorrow(null);
+  };
 
-        this.props.onDoneBorrow(null);
-    };
+  const handleSelect = (e) => {
+    setPersonId(e.value);
+    setPersonName(e.label);
+  };
 
-    async componentDidMount() {
-        this.setState({book: this.props.book});
-        const {data: readers} = await getReaders();
-        const options = readers
-            .sort(function (a, b) {
-                return a.name > b.name ? 1 : b.name > a.name ? -1 : 0;
-            })
-            .map((reader) => {
-                return {value: reader.id, label: reader.name};
-            });
-        this.setState({options});
-    }
+  return (
+    <form onSubmit={handleSubmit} noValidate>
+      <div className="form-group">
+        <label>Wybierz czytelnika_czkę</label>
+        <Select options={options} onChange={handleSelect} />
+      </div>
 
-    handleChange = (e) => {
-        this.setState({[e.target.name]: e.target.value});
-    };
+      <Input
+        label="Data"
+        name="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        type="date"
+      />
+      <div className="form-group">
+        <label>Wypożyczana ilość</label>
+        <input
+          className="form-control"
+          name="quantity"
+          value={quantity}
+          onChange={(e) => setQuantity(e.target.value)}
+          type="number"
+          max={book.available}
+          min={1}
+          noValidate
+        />
+      </div>
 
-    handleSelect = (e) => {
-        this.setState({personId: e.value, personName: e.label});
-    };
-
-    render() {
-        const {date, quantity, options} = this.state;
-        return (
-            <React.Fragment>
-                <form onSubmit={this.handleSubmit} noValidate>
-                    <div className="form-group">
-                        <label>Wybierz czytelnika_czkę</label>
-                        <Select options={options} onChange={this.handleSelect}/>
-                    </div>
-
-                    <Input
-                        label="Data"
-                        name="date"
-                        value={date}
-                        onChange={this.handleChange}
-                        type="date"
-                    />
-                    <div className="form-group">
-                        <label>Wypożyczana ilość</label>
-                        <input
-                            className="form-control"
-                            name="quantity"
-                            value={quantity}
-                            onChange={this.handleChange}
-                            type="number"
-                            max={this.props.book.available}
-                            min={1}
-                            noValidate
-                        />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary">
-                        Zatwierdź
-                    </button>
-                </form>
-            </React.Fragment>
-        );
-    }
-}
+      <button type="submit" className="btn btn-primary">
+        Zatwierdź
+      </button>
+    </form>
+  );
+};
 
 export default BorrowingForm;
