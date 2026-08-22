@@ -1,0 +1,32 @@
+name: Deploy to Staging
+
+on:
+  push:
+    branches: [staging]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Build (staging)
+        env:
+          REACT_APP_API_URL: https://europe-west1-mamusialibrary-staging.cloudfunctions.net/appEurope/
+          CI: false
+        run: npm run build
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.FIREBASE_STAGING_SERVICE_ACCOUNT }}
+
+      - name: Deploy to Firebase Hosting (staging)
+        run: npx firebase-tools deploy --only hosting --project staging --non-interactive
