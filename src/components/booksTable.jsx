@@ -28,12 +28,10 @@ const BooksTable = (props) => {
 
   return (
     <div className="table-responsive">
-      <table className="table table-hover">
+      <table className="table table-hover books-table">
         <thead>
           <tr>
-            {logged ? <th></th> : null}
-            {logged ? <th></th> : null}
-            {logged ? <th></th> : null}
+            {logged ? <th>Akcje</th> : null}
             <th className="clickable" onClick={() => onSort("title")}>
               Tytuł
             </th>
@@ -56,7 +54,7 @@ const BooksTable = (props) => {
               key={book.id}
             >
               {logged ? (
-                <td>
+                <td data-label="Akcje" className="actions-cell">
                   <button
                     className="btn btn-outline-danger btn-sm"
                     data-toggle="tooltip"
@@ -69,10 +67,6 @@ const BooksTable = (props) => {
                   >
                     <DeleteForever />
                   </button>
-                </td>
-              ) : null}
-              {logged ? (
-                <td>
                   <button
                     className="btn btn-outline-primary btn-sm"
                     data-toggle="tooltip"
@@ -82,10 +76,6 @@ const BooksTable = (props) => {
                   >
                     <Edit />
                   </button>
-                </td>
-              ) : null}
-              {logged ? (
-                <td>
                   <button
                     className="btn btn-outline-warning btn-sm"
                     data-toggle="tooltip"
@@ -100,11 +90,11 @@ const BooksTable = (props) => {
                   </button>
                 </td>
               ) : null}
-              <td>{book.title}</td>
-              <td>{book.author}</td>
-              <td>{categories.get(book.category)}</td>
-              <td>{book.available}</td>
-              <td>{places.get(book.place)}</td>
+              <td data-label="Tytuł">{book.title}</td>
+              <td data-label="Autor(ka)">{book.author}</td>
+              <td data-label="Kategoria">{categories.get(book.category)}</td>
+              <td data-label="Dostępnych">{book.available}</td>
+              <td data-label="Lokalizacja">{places.get(book.place)}</td>
             </tr>
           ))}
         </tbody>

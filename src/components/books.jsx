@@ -181,7 +181,7 @@ const BooksView = () => {
           <BorrowBook book={borrowedBook} onDoneBorrow={handleBorrowDone} />
         )}
 
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div className="books-toolbar">
           <div className={"form-element"}>
             <Categories
               categories={categories}
@@ -195,37 +195,36 @@ const BooksView = () => {
           </div>
 
           <div className={"form-element"}>
-            {category && <h6>{categoriesLookup.get(category)}</h6>}
-            {place && <h6>{placesLookup.get(place)}</h6>}
+            {category && <h6 className="mb-0">{categoriesLookup.get(category)}</h6>}
+            {place && <h6 className="mb-0">{placesLookup.get(place)}</h6>}
           </div>
 
-          <div>
-            {logged && !editedBook && (
-              <button className="btn btn-warning form-element" onClick={handleAdd}>
+          {logged && !editedBook && (
+            <div className={"form-element"}>
+              <button className="btn btn-warning" onClick={handleAdd}>
                 Dodaj książkę
               </button>
-            )}
-          </div>
-
-          <div style={{ flexGrow: 1 }} />
+            </div>
+          )}
 
           <form
             onSubmit={handleSearchSubmit}
             noValidate
-            style={{ display: "flex", alignItems: "center" }}
+            className="books-toolbar__search"
           >
-            <div className={"form-element"}>
+            <div className={"form-element books-toolbar__search-input"}>
               <input
                 placeholder="Wyszukaj"
                 name="search"
+                className="form-control"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 type=""
               />
             </div>
 
-            <div>
-              <button className="btn btn-info form-element">Szukaj</button>
+            <div className={"form-element"}>
+              <button className="btn btn-info">Szukaj</button>
             </div>
           </form>
         </div>
