@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom";
 
 const DEFAULT_SORT_BY = "title";
 const DEFAULT_ORDER = "asc";
+const DEFAULT_VIEW = "grid";
 
 // Single source of truth for everything the books list screen filters/sorts/
 // paginates by, kept in the URL query string so a filtered/sorted/paginated
@@ -18,6 +19,7 @@ const useBooksQueryState = () => {
     order: searchParams.get("order") || DEFAULT_ORDER,
     page: parseInt(searchParams.get("page") || "1", 10),
     bookId: searchParams.get("bookId") || null,
+    view: searchParams.get("view") || DEFAULT_VIEW,
   };
 
   // Merges a partial update into the existing params in one setSearchParams

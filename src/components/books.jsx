@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "./common/pagination";
 import BooksTable from "./booksTable";
+import BooksGrid from "./booksGrid";
 import Categories from "./categories";
 import Places from "./places";
+import { ViewModule, ViewList } from "@material-ui/icons/";
 import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import UpdateBook from "./updateBook";
 import BorrowBook from "./borrowBook";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
-import { Alert, Spinner } from "react-bootstrap";
+import { Alert, Spinner, Dropdown } from "react-bootstrap";
 import { getPlaces } from "../services/placeService";
 import BookDetails from "./bookDetails";
 import { useNavigate } from "react-router-dom";
@@ -19,10 +21,16 @@ import useBooksQueryState from "../hooks/useBooksQueryState";
 const PAGE_SIZE = 10;
 const sortByName = (a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0);
 
+const SORT_OPTIONS = [
+  { column: "title", label: "Tytuł" },
+  { column: "author", label: "Autor(ka)" },
+  { column: "place", label: "Lokalizacja" },
+];
+
 const BooksView = () => {
   const { isLoggedIn: logged } = useAuth();
   const navigate = useNavigate();
-  const { q, category, place, sortBy, order, page, bookId, setQuery } =
+  const { q, category, place, sortBy, order, page, bookId, view, setQuery } =
     useBooksQueryState();
 
   const [books, setBooks] = useState([]);
@@ -181,7 +189,7 @@ const BooksView = () => {
           <BorrowBook book={borrowedBook} onDoneBorrow={handleBorrowDone} />
         )}
 
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <div className="books-toolbar">
           <div className={"form-element"}>
             <Categories
               categories={categories}
@@ -195,39 +203,82 @@ const BooksView = () => {
           </div>
 
           <div className={"form-element"}>
-            {category && <h6>{categoriesLookup.get(category)}</h6>}
-            {place && <h6>{placesLookup.get(place)}</h6>}
+            {category && <h6 className="mb-0">{categoriesLookup.get(category)}</h6>}
+            {place && <h6 className="mb-0">{placesLookup.get(place)}</h6>}
           </div>
 
-          <div>
-            {logged && !editedBook && (
-              <button className="btn btn-warning form-element" onClick={handleAdd}>
+          {logged && !editedBook && (
+            <div className={"form-element"}>
+              <button className="btn btn-warning" onClick={handleAdd}>
                 Dodaj książkę
               </button>
-            )}
-          </div>
-
-          <div style={{ flexGrow: 1 }} />
+            </div>
+          )}
 
           <form
             onSubmit={handleSearchSubmit}
             noValidate
-            style={{ display: "flex", alignItems: "center" }}
+            className="books-toolbar__search"
           >
-            <div className={"form-element"}>
+            <div className={"form-element books-toolbar__search-input"}>
               <input
                 placeholder="Wyszukaj"
                 name="search"
+                className="form-control"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 type=""
               />
             </div>
 
-            <div>
-              <button className="btn btn-info form-element">Szukaj</button>
+            <div className={"form-element"}>
+              <button className="btn btn-info">Szukaj</button>
             </div>
           </form>
+
+          {/* Sorting only needs its own control in the grid view — the
+              table view already sorts via its clickable column headers. */}
+          {view === "grid" && (
+            <div className={"form-element"}>
+              <Dropdown>
+                <Dropdown.Toggle variant="outline-secondary" id="dropdown-sort">
+                  Sortuj: {SORT_OPTIONS.find((o) => o.column === sortBy)?.label}{" "}
+                  {order === "asc" ? "↑" : "↓"}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {SORT_OPTIONS.map(({ column, label }) => (
+                    <Dropdown.Item key={column} onClick={() => handleSort(column)}>
+                      {label} {sortBy === column && (order === "asc" ? "↑" : "↓")}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+          )}
+
+          {/* Grid is the mobile-first default view; switching to the dense
+              table is offered only once there's room for it (md+ — the
+              toggle itself is hidden below that via CSS). */}
+          <div className={"form-element books-toolbar__view-toggle"}>
+            <div className="btn-group" role="group" aria-label="Widok">
+              <button
+                type="button"
+                className={`btn btn-outline-secondary${view === "grid" ? " active" : ""}`}
+                title="Widok siatki"
+                onClick={() => setQuery({ view: "grid" })}
+              >
+                <ViewModule />
+              </button>
+              <button
+                type="button"
+                className={`btn btn-outline-secondary${view === "list" ? " active" : ""}`}
+                title="Widok listy"
+                onClick={() => setQuery({ view: "list" })}
+              >
+                <ViewList />
+              </button>
+            </div>
+          </div>
         </div>
 
         {error && <Alert variant={"danger"}>{error.message}</Alert>}
@@ -238,17 +289,30 @@ const BooksView = () => {
           </div>
         )}
 
-        <BooksTable
-          books={books}
-          categories={categoriesLookup}
-          places={placesLookup}
-          onDelete={confirmDelete}
-          onEdit={handleEdit}
-          onSort={handleSort}
-          onBorrow={handleBorrow}
-          onClick={(book) => setQuery({ bookId: book.id })}
-          logged={logged}
-        />
+        {view === "list" ? (
+          <BooksTable
+            books={books}
+            categories={categoriesLookup}
+            places={placesLookup}
+            onDelete={confirmDelete}
+            onEdit={handleEdit}
+            onSort={handleSort}
+            onBorrow={handleBorrow}
+            onClick={(book) => setQuery({ bookId: book.id })}
+            logged={logged}
+          />
+        ) : (
+          <BooksGrid
+            books={books}
+            categories={categoriesLookup}
+            places={placesLookup}
+            onDelete={confirmDelete}
+            onEdit={handleEdit}
+            onBorrow={handleBorrow}
+            onClick={(book) => setQuery({ bookId: book.id })}
+            logged={logged}
+          />
+        )}
       </div>
 
       <Pagination
