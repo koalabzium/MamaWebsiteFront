@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/MamaWebsiteFront/static/css/main.bec93094.css",
-    "main.js": "/MamaWebsiteFront/static/js/main.883ca1de.js",
+    "main.css": "/MamaWebsiteFront/static/css/main.149a2305.css",
+    "main.js": "/MamaWebsiteFront/static/js/main.165fa0b3.js",
     "index.html": "/MamaWebsiteFront/index.html",
-    "main.bec93094.css.map": "/MamaWebsiteFront/static/css/main.bec93094.css.map",
-    "main.883ca1de.js.map": "/MamaWebsiteFront/static/js/main.883ca1de.js.map"
+    "main.149a2305.css.map": "/MamaWebsiteFront/static/css/main.149a2305.css.map",
+    "main.165fa0b3.js.map": "/MamaWebsiteFront/static/js/main.165fa0b3.js.map"
   },
   "entrypoints": [
-    "static/css/main.bec93094.css",
-    "static/js/main.883ca1de.js"
+    "static/css/main.149a2305.css",
+    "static/js/main.165fa0b3.js"
   ]
 }
