@@ -1,0 +1,46 @@
+name: Deploy to Production
+
+# Pushing to the `production` branch builds the app against the prod API
+# (REACT_APP_API_URL from .env.production) and publishes it to GitHub Pages
+# by pushing build/ to the `gh-pages` branch, the same thing `npm run deploy`
+# does locally. The job runs in the `production` GitHub Environment, so if
+# that Environment has required reviewers set, it waits for manual approval.
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - run: npm ci
+
+      - name: Build (production)
+        env:
+          CI: false
+        run: npm run build
+
+      - name: Publish to GitHub Pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npx gh-pages -d build \
+            -u "github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>" \
+            -r "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
