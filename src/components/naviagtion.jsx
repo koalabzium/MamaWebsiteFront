@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Navigation = () => (
   <Navbar sticky="top" bg="light" expand="lg">
     <Navbar.Brand as={Link} to="/">
-      Biblioteka
+      📚 Biblioteka
     </Navbar.Brand>
     <Navbar.Toggle aria-controls="basic-navbar-nav" />
     <Navbar.Collapse id="basic-navbar-nav">
