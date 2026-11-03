@@ -13,6 +13,8 @@ This is the frontend for **Biblioteka Zosi** / "MamaLibrary" — a library/book-
 - `npm test` — CRA/Jest test runner (interactive watch mode); e.g. `npm test -- --testPathPattern=App` for a single file, or run non-interactively with `CI=true npm test`
 - `npm run deploy` — builds and publishes `build/` to GitHub Pages (`gh-pages -d build`)
 
+CI deploys (GitHub Actions, `.github/workflows/`): pushing to `staging` deploys to Firebase Hosting staging (https://mamusialibrary-staging.web.app, against the staging API); pushing to `production` builds against the prod API and publishes to GitHub Pages after approval in the `production` GitHub Environment.
+
 Env config: `.env.development` and `.env.production` set `REACT_APP_API_URL`, the base URL of the deployed backend (europe-west1 Cloud Function). CRA injects it at build time — after changing it you must restart `npm start` / rebuild.
 
 ## Architecture
