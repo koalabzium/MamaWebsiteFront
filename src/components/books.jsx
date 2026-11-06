@@ -7,7 +7,6 @@ import Places from "./places";
 import { ViewModule, ViewList, Add, Close } from "@material-ui/icons/";
 import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
-import BorrowBook from "./borrowBook";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Alert, Spinner, Dropdown } from "react-bootstrap";
@@ -39,7 +38,9 @@ const BooksView = () => {
   const [places, setPlaces] = useState([]);
   const [categoriesLookup, setCategoriesLookup] = useState(new Map());
   const [placesLookup, setPlacesLookup] = useState(new Map());
-  const [borrowedBook, setBorrowedBook] = useState(null);
+  // One-off message handed over via navigation state (e.g. "book borrowed"
+  // from the borrow screen).
+  const [flash, setFlash] = useState(() => (location.state && location.state.flash) || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentBook, setCurrentBook] = useState(null);
@@ -120,6 +121,26 @@ const BooksView = () => {
     };
   }, [bookId]);
 
+  // Drop the flash from history state right away so a refresh or
+  // back-navigation doesn't show it again, and hide it after a while.
+  useEffect(() => {
+    if (location.state && location.state.flash) {
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!flash) return;
+    const t = setTimeout(() => setFlash(null), 6000);
+    return () => clearTimeout(t);
+  }, [flash]);
+
+  const reloadCurrentBook = () => {
+    if (!bookId) return;
+    getBook(bookId).then(({ data }) => setCurrentBook(data));
+  };
+
   const hideSelectedBook = () => setQuery({ bookId: null });
 
   const confirmDelete = (book) => {
@@ -141,23 +162,20 @@ const BooksView = () => {
     deleteBook(book.id);
   };
 
-  const handleEdit = (book) => {
-    // Hand the current list query (minus the open modal) to the edit screen
-    // so "back"/"save" returns to the same filtered/sorted page.
+  // Hand the current list query (minus the open modal) to the edit/borrow
+  // screens so "back"/"save" returns to the same filtered/sorted page.
+  const goToBookScreen = (book, screen) => {
     const params = new URLSearchParams(location.search);
     params.delete("bookId");
     const from = params.toString();
-    navigate(`/books/${book.id}/edit`, { state: { from: from ? `?${from}` : "" } });
+    navigate(`/books/${book.id}/${screen}`, { state: { from: from ? `?${from}` : "" } });
   };
+
+  const handleEdit = (book) => goToBookScreen(book, "edit");
+  const handleBorrow = (book) => goToBookScreen(book, "borrow");
 
   const handleAdd = () => navigate("/books/add");
 
-  const handleBorrow = (book) => {
-    setBorrowedBook(book);
-    window.scrollTo(0, 0);
-  };
-
-  const handleBorrowDone = () => setBorrowedBook(null);
 
   const handlePageChange = (newPage) => setQuery({ page: newPage });
 
@@ -213,8 +231,15 @@ const BooksView = () => {
           )}
         </div>
 
-        {borrowedBook && (
-          <BorrowBook book={borrowedBook} onDoneBorrow={handleBorrowDone} />
+        {flash && (
+          <Alert
+            variant={flash.variant || "success"}
+            onClose={() => setFlash(null)}
+            dismissible
+            className="mx-1 mt-2 mb-0"
+          >
+            {flash.message}
+          </Alert>
         )}
 
         <div className="books-toolbar">
@@ -366,6 +391,8 @@ const BooksView = () => {
         places={placesLookup}
         categories={categoriesLookup}
         onEdit={handleEdit}
+        onBorrow={handleBorrow}
+        onBorrowingsChanged={reloadCurrentBook}
       />
     </React.Fragment>
   );

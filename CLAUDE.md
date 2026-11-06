@@ -19,7 +19,7 @@ Env config: `.env.development` and `.env.production` set `REACT_APP_API_URL`, th
 
 ## Architecture
 
-CRA app, class-and-function components mixed (older screens are class components, e.g. `App.js`; newer ones are functional). Routing is `react-router-dom` v6 (`App.js`), with routes for `/books`, `/books/add`, `/books/:id/edit`, `/admin`, and a catch-all `/not-found`.
+CRA app, class-and-function components mixed (older screens are class components, e.g. `App.js`; newer ones are functional). Routing is `react-router-dom` v6 (`App.js`), with routes for `/books`, `/books/add`, `/books/:id/edit`, `/books/:id/borrow`, `/admin` (+ `/admin/borrowings`), and a catch-all `/not-found`.
 
 - `src/services/*.js` — one file per backend resource (`bookService.js`, `borrowingService.js`, `categoryService.js`, `placeService.js`, `readerService.js`, `loginService.js`), each a thin `axios` wrapper around `${REACT_APP_API_URL}<resource>/...`. This is the only place API URLs/paths are constructed — components call these functions rather than using `axios` directly.
 - **Auth token** is stored in `localStorage` under `token` (set by whatever calls `loginService.login`) and attached manually as `Authorization: Bearer <token>` on every mutating service call (see `bookService.js`). There's no axios interceptor — each write-capable service function repeats this header by hand, so new mutating endpoints need the same treatment.

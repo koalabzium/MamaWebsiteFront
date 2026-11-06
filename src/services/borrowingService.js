@@ -24,7 +24,6 @@ export function returnBook(borrowingId) {
 }
 
 export function addBorrowing(data) {
-  console.log("w serwisie: ", data);
   return axios({
     method: "post",
     url: apiEndpoint,
@@ -37,10 +36,17 @@ export function addBorrowing(data) {
 
 export function handleCancelBorrowing(borrowing) {
   return axios.post(
-    `${apiEndpoint}/${borrowing.id}/cancel`,
+    `${apiEndpoint}${borrowing.id}/cancel`,
     {},
     {
       headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
     }
   );
+}
+
+export function getBorrowings({ active } = {}) {
+  return axios.get(apiEndpoint, {
+    params: active ? { active: "true" } : {},
+    headers: { authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
 }

@@ -39,16 +39,18 @@ const ManageReaders = () => {
   });
 
   const [borrowings, setBorrowings] = useState(null);
+  const [borrowingsReader, setBorrowingsReader] = useState(null);
 
   const handleOpenBorrowingDetails = useCallback(async (reader) => {
     const { data } = await getReadersBorrowings(reader.id);
+    setBorrowingsReader(reader.name);
     setBorrowings(data);
   }, []);
 
-  const onCancelBorrowing = useCallback((toDelete) => {
-    handleCancelBorrowing(toDelete).then(() => {
-      setBorrowings((prev) => prev.filter((b) => b !== toDelete));
-    });
+  // Returns the request promise so the modal can show success/failure.
+  const onCancelBorrowing = useCallback(async (toDelete) => {
+    await handleCancelBorrowing(toDelete);
+    setBorrowings((prev) => prev.filter((b) => b.id !== toDelete.id));
   }, []);
 
   return (
@@ -109,6 +111,7 @@ const ManageReaders = () => {
       <BorrowingsModal
         borrowings={borrowings}
         onCancelBorrowing={onCancelBorrowing}
+        title={borrowingsReader ? `Wypożyczenia — ${borrowingsReader}` : "Wypożyczenia"}
         onHide={() => setBorrowings(null)}
       />
     </React.Fragment>

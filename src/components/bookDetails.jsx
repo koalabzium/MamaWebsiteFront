@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
-import { OpenInNew, Edit } from "@material-ui/icons/";
+import { OpenInNew, Edit, ArrowUpward } from "@material-ui/icons/";
 import BookBorrowings from "./bookDetails/BookBorrowings";
 import BookCover from "./common/bookCover";
 import useAuth from "../hooks/useAuth";
@@ -14,7 +14,15 @@ const normalizeLink = (link) => {
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 };
 
-const BookDetails = ({ book, places, categories, onEdit, ...modalProps }) => {
+const BookDetails = ({
+  book,
+  places,
+  categories,
+  onEdit,
+  onBorrow,
+  onBorrowingsChanged,
+  ...modalProps
+}) => {
   const { isLoggedIn } = useAuth();
 
   if (!book) {
@@ -35,6 +43,7 @@ const BookDetails = ({ book, places, categories, onEdit, ...modalProps }) => {
       size="lg"
       aria-labelledby="book-details-title"
       centered
+      enforceFocus={false}
       className="book-details"
     >
       <Modal.Header closeButton className="book-details__header" />
@@ -92,6 +101,11 @@ const BookDetails = ({ book, places, categories, onEdit, ...modalProps }) => {
                   Strona z książką <OpenInNew fontSize="inherit" />
                 </a>
               )}
+              {isLoggedIn && onBorrow && available > 0 && (
+                <button className="btn btn-outline-warning btn-sm" onClick={() => onBorrow(book)}>
+                  <ArrowUpward fontSize="inherit" /> Wypożycz
+                </button>
+              )}
               {isLoggedIn && onEdit && (
                 <button className="btn btn-outline-primary btn-sm" onClick={() => onEdit(book)}>
                   <Edit fontSize="inherit" /> Edytuj
@@ -106,7 +120,7 @@ const BookDetails = ({ book, places, categories, onEdit, ...modalProps }) => {
         {isLoggedIn && (
           <div className="book-details__borrowings">
             <h6>Wypożyczenia</h6>
-            <BookBorrowings bookId={book.id} />
+            <BookBorrowings bookId={book.id} onChanged={onBorrowingsChanged} />
           </div>
         )}
       </Modal.Body>
