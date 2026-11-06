@@ -1,10 +1,10 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 
-const Places = ({ places, onFilter }) => (
+const Places = ({ places, onFilter, current }) => (
   <Dropdown>
-    <Dropdown.Toggle variant="success" id="dropdown-basic-places">
-      Lokalizacje
+    <Dropdown.Toggle variant={current ? "success" : "outline-success"} id="dropdown-basic-places">
+      {current || "Lokalizacje"}
     </Dropdown.Toggle>
 
     <Dropdown.Menu>

@@ -1,79 +1,114 @@
 import React from "react";
 import Modal from "react-bootstrap/Modal";
-import ListGroup from "react-bootstrap/ListGroup";
-import ListGroupItem from "react-bootstrap/ListGroupItem";
-import "react-confirm-alert/src/react-confirm-alert.css";
+import { OpenInNew, Edit } from "@material-ui/icons/";
 import BookBorrowings from "./bookDetails/BookBorrowings";
+import BookCover from "./common/bookCover";
 import useAuth from "../hooks/useAuth";
 
-const BookDetails = ({ book, places, ...modalProps }) => {
+// Links are typed in by hand, so they're often blank or missing a protocol
+// ("www.example.pl"), which the browser would resolve as a relative path
+// inside this app. Returns null when there's nothing usable to link to.
+const normalizeLink = (link) => {
+  const trimmed = (link || "").trim();
+  if (!trimmed) return null;
+  return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+};
+
+const BookDetails = ({ book, places, categories, onEdit, ...modalProps }) => {
   const { isLoggedIn } = useAuth();
 
   if (!book) {
     return null;
   }
 
+  const link = normalizeLink(book.link);
+  const placeName = places.get(book.place);
+  const categoryName = categories && categories.get(book.category);
+  // The DB field is called "location", but it has always held the publisher.
+  const publisher = (book.location || "").trim();
+  const available = Number(book.available) || 0;
+  const quantity = Number(book.quantity) || 0;
+
   return (
-    <Modal {...modalProps} size="lg" aria-labelledby="contained-modal-title-vcenter" centered>
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">{book.title}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <div>
-          <div className="container">
-            <div className="row">
-              <div
-                className="col-sm"
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <img
-                  src={book.image}
-                  style={{
-                    objectFit: "contain",
-                    flexShrink: 0,
-                    minWidth: "100%",
-                    minHeight: "100%",
-                    maxHeight: 400,
-                  }}
-                  alt={book.title}
-                />
-              </div>
-              <div className="col-sm" style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-                <span>
-                  <h2>{book.title}</h2>
-                </span>
-                <span>
-                  <h4 style={{ color: "#585858" }}>{book.author}</h4>
-                </span>
-                <span>
-                  <a href={book.link}>Strona z książką</a>
-                </span>
-                {isLoggedIn ? (
-                  <ListGroup>
-                    <ListGroupItem>Wydawnictwo: {book.location}</ListGroupItem>
-                    <ListGroupItem>Lokalizacja: {places.get(book.place)}</ListGroupItem>
-                    <ListGroupItem>Ilość egzemplarzy: {book.quantity}</ListGroupItem>
-                    <ListGroupItem>
-                      {" "}
-                      Wypożyczenia:
-                      <BookBorrowings bookId={book.id} />
-                    </ListGroupItem>
-                  </ListGroup>
-                ) : null}
-              </div>
-            </div>
+    <Modal
+      {...modalProps}
+      size="lg"
+      aria-labelledby="book-details-title"
+      centered
+      className="book-details"
+    >
+      <Modal.Header closeButton className="book-details__header" />
+      <Modal.Body className="book-details__body">
+        <div className="book-details__layout">
+          <div className="book-details__cover">
+            <BookCover src={book.image} title={book.title} author={book.author} />
           </div>
 
-          <div style={{ margin: 20 }}>
-            <span>{book.description}</span>
+          <div className="book-details__info">
+            {book.author && <div className="book-details__author">{book.author}</div>}
+            <h2 id="book-details-title" className="book-details__title">
+              {book.title}
+            </h2>
+
+            <span
+              className={`book-details__availability ${
+                available > 0 ? "is-available" : "is-unavailable"
+              }`}
+            >
+              {available > 0
+                ? `Dostępne: ${available} z ${quantity}`
+                : `Wszystkie egzemplarze wypożyczone (${quantity})`}
+            </span>
+
+            <dl className="book-details__facts">
+              {placeName && (
+                <>
+                  <dt>Lokalizacja</dt>
+                  <dd>{placeName}</dd>
+                </>
+              )}
+              {categoryName && (
+                <>
+                  <dt>Kategoria</dt>
+                  <dd>{categoryName}</dd>
+                </>
+              )}
+              {publisher && (
+                <>
+                  <dt>Wydawnictwo</dt>
+                  <dd>{publisher}</dd>
+                </>
+              )}
+            </dl>
+
+            <div className="book-details__actions">
+              {link && (
+                <a
+                  className="btn btn-outline-info btn-sm"
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Strona z książką <OpenInNew fontSize="inherit" />
+                </a>
+              )}
+              {isLoggedIn && onEdit && (
+                <button className="btn btn-outline-primary btn-sm" onClick={() => onEdit(book)}>
+                  <Edit fontSize="inherit" /> Edytuj
+                </button>
+              )}
+            </div>
           </div>
         </div>
+
+        {book.description && <p className="book-details__description">{book.description}</p>}
+
+        {isLoggedIn && (
+          <div className="book-details__borrowings">
+            <h6>Wypożyczenia</h6>
+            <BookBorrowings bookId={book.id} />
+          </div>
+        )}
       </Modal.Body>
     </Modal>
   );
