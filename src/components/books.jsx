@@ -4,17 +4,15 @@ import BooksTable from "./booksTable";
 import BooksGrid from "./booksGrid";
 import Categories from "./categories";
 import Places from "./places";
-import { ViewModule, ViewList } from "@material-ui/icons/";
+import { ViewModule, ViewList, Add, Close } from "@material-ui/icons/";
 import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
-import UpdateBook from "./updateBook";
-import BorrowBook from "./borrowBook";
 import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css";
 import { Alert, Spinner, Dropdown } from "react-bootstrap";
 import { getPlaces } from "../services/placeService";
 import BookDetails from "./bookDetails";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useBooksQueryState from "../hooks/useBooksQueryState";
 
@@ -30,6 +28,7 @@ const SORT_OPTIONS = [
 const BooksView = () => {
   const { isLoggedIn: logged } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const { q, category, place, sortBy, order, page, bookId, view, setQuery } =
     useBooksQueryState();
 
@@ -39,8 +38,9 @@ const BooksView = () => {
   const [places, setPlaces] = useState([]);
   const [categoriesLookup, setCategoriesLookup] = useState(new Map());
   const [placesLookup, setPlacesLookup] = useState(new Map());
-  const [editedBook, setEditedBook] = useState(null);
-  const [borrowedBook, setBorrowedBook] = useState(null);
+  // One-off message handed over via navigation state (e.g. "book borrowed"
+  // from the borrow screen).
+  const [flash, setFlash] = useState(() => (location.state && location.state.flash) || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [currentBook, setCurrentBook] = useState(null);
@@ -121,6 +121,26 @@ const BooksView = () => {
     };
   }, [bookId]);
 
+  // Drop the flash from history state right away so a refresh or
+  // back-navigation doesn't show it again, and hide it after a while.
+  useEffect(() => {
+    if (location.state && location.state.flash) {
+      navigate(location.pathname + location.search, { replace: true, state: null });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!flash) return;
+    const t = setTimeout(() => setFlash(null), 6000);
+    return () => clearTimeout(t);
+  }, [flash]);
+
+  const reloadCurrentBook = () => {
+    if (!bookId) return;
+    getBook(bookId).then(({ data }) => setCurrentBook(data));
+  };
+
   const hideSelectedBook = () => setQuery({ bookId: null });
 
   const confirmDelete = (book) => {
@@ -142,28 +162,20 @@ const BooksView = () => {
     deleteBook(book.id);
   };
 
-  const handleEdit = (book) => {
-    setBorrowedBook(null);
-    setEditedBook(book);
-    window.scrollTo(0, 0);
+  // Hand the current list query (minus the open modal) to the edit/borrow
+  // screens so "back"/"save" returns to the same filtered/sorted page.
+  const goToBookScreen = (book, screen) => {
+    const params = new URLSearchParams(location.search);
+    params.delete("bookId");
+    const from = params.toString();
+    navigate(`/books/${book.id}/${screen}`, { state: { from: from ? `?${from}` : "" } });
   };
 
-  const handleEditDone = (book) => {
-    if (book) {
-      setBooks((prev) => prev.map((b) => (b.id === book.id ? book : b)));
-    }
-    setEditedBook(null);
-  };
+  const handleEdit = (book) => goToBookScreen(book, "edit");
+  const handleBorrow = (book) => goToBookScreen(book, "borrow");
 
   const handleAdd = () => navigate("/books/add");
 
-  const handleBorrow = (book) => {
-    setEditedBook(null);
-    setBorrowedBook(book);
-    window.scrollTo(0, 0);
-  };
-
-  const handleBorrowDone = () => setBorrowedBook(null);
 
   const handlePageChange = (newPage) => setQuery({ page: newPage });
 
@@ -180,13 +192,54 @@ const BooksView = () => {
     setQuery({ q: searchInput, page: 1 });
   };
 
+  const clearSearch = () => {
+    setSearchInput("");
+    setQuery({ q: null, page: 1 });
+  };
+
+  const activeFilters = [
+    category && {
+      key: "category",
+      label: `Kategoria: ${categoriesLookup.get(category) || "…"}`,
+      clear: () => handleFilter(null),
+    },
+    place && {
+      key: "place",
+      label: `Lokalizacja: ${placesLookup.get(place) || "…"}`,
+      clear: () => handlePlaceFilter(null),
+    },
+    q && { key: "q", label: `Szukasz: „${q}”`, clear: clearSearch },
+  ].filter(Boolean);
+
+  const clearAllFilters = () => {
+    setSearchInput("");
+    setQuery({ category: null, place: null, q: null, page: 1 });
+  };
+
   return (
     <React.Fragment>
       <div>
-        {editedBook && <UpdateBook book={editedBook} onDoneEdit={handleEditDone} />}
+        <div className="books-header">
+          <h1 className="books-header__title">
+            Książki
+            {!loading && <span className="books-header__count">{totalCount}</span>}
+          </h1>
+          {logged && (
+            <button className="btn btn-warning books-header__add" onClick={handleAdd}>
+              <Add fontSize="small" /> Dodaj książkę
+            </button>
+          )}
+        </div>
 
-        {borrowedBook && (
-          <BorrowBook book={borrowedBook} onDoneBorrow={handleBorrowDone} />
+        {flash && (
+          <Alert
+            variant={flash.variant || "success"}
+            onClose={() => setFlash(null)}
+            dismissible
+            className="mx-1 mt-2 mb-0"
+          >
+            {flash.message}
+          </Alert>
         )}
 
         <div className="books-toolbar">
@@ -199,21 +252,12 @@ const BooksView = () => {
           </div>
 
           <div className={"form-element"}>
-            <Places places={places} onFilter={handlePlaceFilter} />
+            <Places
+              places={places}
+              onFilter={handlePlaceFilter}
+              current={placesLookup.get(place)}
+            />
           </div>
-
-          <div className={"form-element"}>
-            {category && <h6 className="mb-0">{categoriesLookup.get(category)}</h6>}
-            {place && <h6 className="mb-0">{placesLookup.get(place)}</h6>}
-          </div>
-
-          {logged && !editedBook && (
-            <div className={"form-element"}>
-              <button className="btn btn-warning" onClick={handleAdd}>
-                Dodaj książkę
-              </button>
-            </div>
-          )}
 
           <form
             onSubmit={handleSearchSubmit}
@@ -281,6 +325,24 @@ const BooksView = () => {
           </div>
         </div>
 
+        {activeFilters.length > 0 && (
+          <div className="active-filters">
+            {activeFilters.map(({ key, label, clear }) => (
+              <span className="active-filters__chip" key={key}>
+                {label}
+                <button type="button" aria-label="Usuń filtr" onClick={clear}>
+                  <Close fontSize="inherit" />
+                </button>
+              </span>
+            ))}
+            {activeFilters.length > 1 && (
+              <button type="button" className="btn btn-link btn-sm" onClick={clearAllFilters}>
+                Wyczyść wszystkie
+              </button>
+            )}
+          </div>
+        )}
+
         {error && <Alert variant={"danger"}>{error.message}</Alert>}
 
         {loading && (
@@ -327,6 +389,10 @@ const BooksView = () => {
         onHide={hideSelectedBook}
         book={currentBook}
         places={placesLookup}
+        categories={categoriesLookup}
+        onEdit={handleEdit}
+        onBorrow={handleBorrow}
+        onBorrowingsChanged={reloadCurrentBook}
       />
     </React.Fragment>
   );
