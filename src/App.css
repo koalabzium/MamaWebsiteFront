@@ -34,8 +34,7 @@
 }
 
 .books-toolbar .dropdown,
-.books-toolbar .dropdown .btn,
-.books-toolbar .btn-warning {
+.books-toolbar .dropdown .btn {
   width: 100%;
 }
 
@@ -65,8 +64,7 @@
   }
 
   .books-toolbar .dropdown,
-  .books-toolbar .dropdown .btn,
-  .books-toolbar .btn-warning {
+  .books-toolbar .dropdown .btn {
     width: auto;
   }
 
@@ -95,9 +93,13 @@
 /* Bookstore-style cover grid — the default, mobile-first books view.
    auto-fill keeps 2 narrow columns on a phone and grows the column count
    as there's room, without any hand-picked breakpoints. */
+/* auto-fill (not auto-fit) keeps empty tracks around, so a short result
+   list (even a single book) stays tile-sized instead of stretching to fill
+   the row. Columns are also capped so very wide screens add more columns
+   rather than bigger tiles. */
 .books-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 14px;
   margin-top: 10px;
 }
@@ -124,25 +126,9 @@
   background: #f0f0f0;
 }
 
-.book-card__cover img {
+.book-card__cover .book-cover {
   width: 100%;
   height: 100%;
-  max-height: none;
-  object-fit: cover;
-  display: block;
-}
-
-.book-card__cover-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #b0b0b0;
-}
-
-.book-card__cover-placeholder svg {
-  font-size: 2.5rem;
 }
 
 .book-card__badge {
@@ -307,6 +293,417 @@
 .pagination {
   flex-wrap: wrap;
   row-gap: 4px;
+}
+
+/* ---------- Books page header & active filters ---------- */
+.books-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 5px 4px;
+}
+
+.books-header__title {
+  font-size: 1.5rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.books-header__count {
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: #eee;
+  color: #555;
+  border-radius: 10px;
+  padding: 2px 8px;
+}
+
+.books-header__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  padding: 0 5px;
+  margin-bottom: 4px;
+}
+
+.active-filters__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #e6f4ea;
+  color: #1e7e34;
+  border-radius: 14px;
+  padding: 3px 4px 3px 10px;
+  font-size: 0.85rem;
+}
+
+.active-filters__chip button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  display: inline-flex;
+  padding: 2px;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.active-filters__chip button:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+/* ---------- Book cover (image or placeholder) ---------- */
+.book-cover {
+  display: block;
+  width: 100%;
+  max-height: none;
+  object-fit: cover;
+}
+
+.book-cover--placeholder {
+  aspect-ratio: 2 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  text-align: center;
+  background: linear-gradient(160deg, #5b7f6e 0%, #3e5a4d 100%);
+  color: #f3efe4;
+  overflow: hidden;
+}
+
+.book-cover__icon {
+  font-size: 2.2rem !important;
+  opacity: 0.6;
+}
+
+.book-cover__title {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.book-cover__author {
+  font-size: 0.7rem;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* ---------- Book details modal ---------- */
+.book-details__header {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.book-details__body {
+  padding-top: 0;
+}
+
+.book-details__layout {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.book-details__cover {
+  width: 60%;
+  max-width: 220px;
+  margin: 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  align-self: flex-start;
+}
+
+.book-details__cover .book-cover--placeholder .book-cover__title {
+  font-size: 1.1rem;
+}
+
+.book-details__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.book-details__author {
+  font-size: 0.95rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.book-details__title {
+  font-size: 1.75rem;
+  line-height: 1.2;
+  margin: 2px 0 12px;
+}
+
+.book-details__availability {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 3px 10px;
+  margin-bottom: 14px;
+}
+
+.book-details__availability.is-available {
+  background: #e6f4ea;
+  color: #1e7e34;
+}
+
+.book-details__availability.is-unavailable {
+  background: #fdecea;
+  color: #b02a37;
+}
+
+.book-details__facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 16px;
+  row-gap: 6px;
+  margin-bottom: 14px;
+}
+
+.book-details__facts dt {
+  font-weight: normal;
+  color: #6c757d;
+}
+
+.book-details__facts dd {
+  margin: 0;
+}
+
+.book-details__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.book-details__actions .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.book-details__description {
+  margin: 20px 0 0;
+  white-space: pre-line;
+  line-height: 1.6;
+}
+
+.book-details__borrowings {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
+}
+
+@media (min-width: 576px) {
+  .book-details__layout {
+    flex-direction: row;
+  }
+
+  .book-details__cover {
+    width: 220px;
+    flex: 0 0 220px;
+    margin: 0;
+  }
+}
+
+/* ---------- Add / edit book screen ---------- */
+.book-form-screen {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 8px 4px 24px;
+}
+
+.book-form-screen__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 0;
+  margin-bottom: 6px;
+}
+
+.book-form-screen__card {
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.book-form-screen__title {
+  font-size: 1.5rem;
+  margin-bottom: 4px;
+}
+
+.book-form__cover {
+  max-width: 200px;
+  margin: 0 auto;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.book-form__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid #eee;
+  padding-top: 16px;
+  margin-top: 8px;
+}
+
+@media (max-width: 575.98px) {
+  .book-form__footer .btn {
+    flex: 1 1 100%;
+  }
+}
+
+/* Confirmation dialogs (react-confirm-alert) can open from inside a
+   Bootstrap modal (z-index 1050), so they must sit above it. */
+.react-confirm-alert-overlay {
+  z-index: 2000;
+}
+
+/* ---------- Borrowing ---------- */
+.borrow-form {
+  max-width: 640px;
+}
+
+.borrow-form__book {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+.borrow-form__cover {
+  flex: 0 0 90px;
+  width: 90px;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.borrow-form__cover .book-cover__title {
+  font-size: 0.6rem;
+}
+
+.borrow-form__cover .book-cover__icon,
+.borrow-form__cover .book-cover__author {
+  display: none;
+}
+
+.borrow-form__title {
+  font-size: 1.3rem;
+  margin: 2px 0 8px;
+}
+
+.borrowings-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.borrowings-list__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.borrowings-list__item:last-child {
+  border-bottom: none;
+}
+
+.borrowings-list__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.borrowings-list__name {
+  font-weight: 500;
+}
+
+.borrowings-list__meta {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+
+.borrowings-list__end,
+.admin-borrowings .actions-cell .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+/* ---------- Admin panel ---------- */
+.admin-panel {
+  padding: 8px 4px;
+}
+
+.admin-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.admin-panel__header h1 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+.admin-borrowings__filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.admin-borrowings__filter label {
+  font-size: 0.85rem;
+  color: #6c757d;
+  margin-bottom: 2px;
+}
+
+@media (min-width: 768px) {
+  .admin-borrowings__filters {
+    flex-direction: row;
+    align-items: flex-end;
+  }
+
+  .admin-borrowings__filter {
+    flex: 0 1 280px;
+  }
+
+  .admin-borrowings__toggle {
+    margin-bottom: 8px;
+  }
 }
 
 @keyframes App-logo-spin {

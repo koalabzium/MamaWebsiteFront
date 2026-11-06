@@ -1,11 +1,11 @@
 import React from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 
-const Categories = ({ categories, onFilter }) => {
+const Categories = ({ categories, onFilter, current }) => {
   return (
     <Dropdown>
-      <Dropdown.Toggle variant="success" id="dropdown-basic">
-        Kategorie
+      <Dropdown.Toggle variant={current ? "success" : "outline-success"} id="dropdown-basic">
+        {current || "Kategorie"}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>

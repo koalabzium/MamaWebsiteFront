@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { ArrowUpward, DeleteForever, Edit, MenuBook } from "@material-ui/icons/";
+import { ArrowUpward, DeleteForever, Edit } from "@material-ui/icons/";
+import BookCover from "./common/bookCover";
 
 const isUnavailable = (book) => book.available <= 0;
 
@@ -17,13 +18,7 @@ const BooksGrid = (props) => {
       {books.map((book) => (
         <div className="book-card clickable" onClick={() => onClick(book)} key={book.id}>
           <div className="book-card__cover">
-            {book.image ? (
-              <img src={book.image} alt={book.title} loading="lazy" />
-            ) : (
-              <div className="book-card__cover-placeholder">
-                <MenuBook />
-              </div>
-            )}
+            <BookCover src={book.image} title={book.title} author={book.author} lazy />
             {isUnavailable(book) && (
               <span className="book-card__badge">Niedostępna</span>
             )}

@@ -6,6 +6,7 @@ import Input from "./common/input";
 import { getPlaces } from "../services/placeService";
 import Select from "react-select";
 import { getCategories } from "../services/categoryService";
+import BookCover from "./common/bookCover";
 
 const sortByName = (a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0);
 
@@ -39,12 +40,13 @@ const emptyForm = {
   originalQuantity: undefined,
 };
 
-const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
+const AddBookForm = ({ book, onDoneEdit, onDoneAdd, onCancel }) => {
   const [form, setForm] = useState(emptyForm);
   const [options, setOptions] = useState([]);
   const [placesOptions, setPlacesOptions] = useState([]);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // Populate the form from the book being edited, both on initial mount and
   // whenever a different book is passed in (e.g. clicking "edit" on another
@@ -103,7 +105,16 @@ const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+
+  const toError = (err) => {
+    if (err.response) {
+      const { message = "Niepoprawne dane" } = err.response.data || {};
+      return new Error(message);
+    }
+    return err;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const {
       image,
@@ -122,7 +133,8 @@ const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
     } = form;
 
     const newAvailability = parseInt(available) + parseInt(quantity - originalQuantity);
-    let editedBook = {
+    const toSaveImage = image_link === "" ? image : image_link;
+    const bookToSave = {
       title,
       author,
       description,
@@ -133,25 +145,22 @@ const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
       place: placeId,
       available: newAvailability,
       id,
+      image: toSaveImage,
     };
-    const toSaveImage = image_link === "" ? image : image_link;
 
-    if (editing) {
-      editedBook = { ...editedBook, image: toSaveImage };
-      onDoneEdit(editedBook);
-      editBook(editedBook);
-    } else {
-      addBook({ ...editedBook, image: toSaveImage })
-        .then((res) => onDoneAdd(res.data))
-        .catch((err) => {
-          if (err.response) {
-            const { data } = err.response;
-            const { message = "Niepoprawne dane" } = data || {};
-            setError(new Error(message));
-          } else {
-            setError(err);
-          }
-        });
+    setSaving(true);
+    setError(null);
+    try {
+      if (editing) {
+        await editBook(bookToSave);
+        onDoneEdit(bookToSave);
+      } else {
+        const res = await addBook(bookToSave);
+        onDoneAdd(res.data);
+      }
+    } catch (err) {
+      setError(toError(err));
+      setSaving(false);
     }
   };
 
@@ -171,117 +180,135 @@ const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
   } = form;
   const minQuantity =
     originalQuantity !== undefined ? originalQuantity - available : 0;
+  const invalid = validateForm();
+  const previewImage = image_link || image;
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
-      <Input label="Tytuł" name="title" value={title} onChange={handleChange} type="" />
-      <Input
-        label="Autor(ka)"
-        name="author"
-        value={author}
-        onChange={handleChange}
-        type=""
-      />
-
-      <div className="form-group">
-        <label>Wybierz kategorię</label>
-        <Select
-          options={options}
-          onChange={handleSelect}
-          value={options.find(({ value }) => value === categoryId)}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Wybierz lokalizację</label>
-        <Select
-          options={placesOptions}
-          onChange={handleSelectPlace}
-          value={placesOptions.find(({ value }) => value === placeId)}
-        />
-      </div>
-
-      <Input label="Odnośnik" name="link" value={link} onChange={handleChange} type="" />
-      <div className="form-group">
-        <label>Ilość egzemplarzy</label>
-        <input
-          className="form-control"
-          name="quantity"
-          value={quantity}
-          onChange={handleChange}
-          type="number"
-          min={parseInt(minQuantity)}
-          noValidate
-        />
-      </div>
-      <Input
-        label="Wydawnictwo"
-        name="location"
-        value={location}
-        onChange={handleChange}
-        type=""
-      />
-
-      <div className="form-group">
-        <label htmlFor="exampleFormControlTextarea1">Opis książki</label>
-        <textarea
-          className="form-control"
-          rows="3"
-          name="description"
-          value={description}
-          onChange={handleChange}
-        />
-      </div>
-
-      <div className="form-group">
-        <label>Zdjęcie okładki</label>
-        {image ? (
-          <div>
-            <div>
-              <img src={image} className="rounded" alt="okładka" />
+    <form onSubmit={handleSubmit} noValidate className="book-form">
+      <div className="row">
+        <div className="col-md-8">
+          <div className="form-row">
+            <div className="col-sm-6">
+              <Input label="Tytuł *" name="title" value={title} onChange={handleChange} type="" />
             </div>
-
-            <div>
-              <button
-                className="btn btn-dark"
-                onClick={() => setForm((prev) => ({ ...prev, image: null }))}
-                style={{ marginTop: 10 }}
-              >
-                Zmień zdjęcie
-              </button>
+            <div className="col-sm-6">
+              <Input
+                label="Autor(ka) *"
+                name="author"
+                value={author}
+                onChange={handleChange}
+                type=""
+              />
             </div>
           </div>
-        ) : (
-          <Dropzone onDrop={handleOnDrop}>
-            {({ getRootProps, getInputProps }) => (
-              <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                <div className="dropzone clickable">
-                  Przeciągnij zdjęcie lub kliknij tutaj i wybierz je z plików.
-                </div>
-              </div>
+
+          <div className="form-row">
+            <div className="form-group col-sm-6">
+              <label>Kategoria</label>
+              <Select
+                options={options}
+                onChange={handleSelect}
+                value={options.find(({ value }) => value === categoryId) || null}
+                placeholder="Wybierz kategorię"
+              />
+            </div>
+            <div className="form-group col-sm-6">
+              <label>Lokalizacja</label>
+              <Select
+                options={placesOptions}
+                onChange={handleSelectPlace}
+                value={placesOptions.find(({ value }) => value === placeId) || null}
+                placeholder="Wybierz lokalizację"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <div className="col-sm-8">
+              <Input
+                label="Wydawnictwo"
+                name="location"
+                value={location}
+                onChange={handleChange}
+                type=""
+              />
+            </div>
+            <div className="form-group col-sm-4">
+              <label>Ilość egzemplarzy *</label>
+              <input
+                className="form-control"
+                name="quantity"
+                value={quantity}
+                onChange={handleChange}
+                type="number"
+                min={parseInt(minQuantity)}
+                noValidate
+              />
+              {editing && minQuantity > 0 && (
+                <small className="form-text text-muted">
+                  Wypożyczone: {minQuantity}
+                </small>
+              )}
+            </div>
+          </div>
+
+          <Input
+            label="Strona z książką (link)"
+            name="link"
+            value={link}
+            onChange={handleChange}
+            type="url"
+          />
+
+          <div className="form-group">
+            <label>Opis książki</label>
+            <textarea
+              className="form-control"
+              rows="6"
+              name="description"
+              value={description}
+              onChange={handleChange}
+            />
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="form-group">
+            <label>Okładka</label>
+            <div className="book-form__cover">
+              <BookCover src={previewImage} title={title} author={author} />
+            </div>
+            {image ? (
+              <button
+                type="button"
+                className="btn btn-outline-dark btn-sm btn-block mt-2"
+                onClick={() => setForm((prev) => ({ ...prev, image: null }))}
+              >
+                Usuń zdjęcie
+              </button>
+            ) : (
+              <Dropzone onDrop={handleOnDrop} accept="image/*">
+                {({ getRootProps, getInputProps }) => (
+                  <div {...getRootProps()} className="mt-2">
+                    <input {...getInputProps()} />
+                    <div className="dropzone clickable">
+                      Przeciągnij zdjęcie lub kliknij i wybierz plik.
+                    </div>
+                  </div>
+                )}
+              </Dropzone>
             )}
-          </Dropzone>
-        )}
+          </div>
+
+          <Input
+            label="Lub wklej link do okładki"
+            name="image_link"
+            value={image_link}
+            onChange={handleChange}
+            type="url"
+          />
+        </div>
       </div>
-
-      <Input
-        label="Lub wstaw link do okładki"
-        name="image_link"
-        value={image_link}
-        onChange={handleChange}
-        type=""
-      />
-
-      {validateForm() ? (
-        <div className="alert alert-danger" role="alert">
-          Wpisz przynajmniej Autorkę i Tytuł.{" "}
-        </div>
-      ) : (
-        <div className="alert alert-success" role="alert">
-          Gotowe :)
-        </div>
-      )}
 
       {error && (
         <div className="alert alert-danger" role="alert">
@@ -289,9 +316,19 @@ const AddBookForm = ({ book, onDoneEdit, onDoneAdd }) => {
         </div>
       )}
 
-      <button disabled={validateForm()} type="submit" className="btn btn-primary">
-        Zatwierdź
-      </button>
+      <div className="book-form__footer">
+        {invalid && (
+          <small className="text-muted mr-auto">Wpisz przynajmniej tytuł i autora.</small>
+        )}
+        {onCancel && (
+          <button type="button" className="btn btn-outline-secondary" onClick={onCancel}>
+            Anuluj
+          </button>
+        )}
+        <button disabled={invalid || saving} type="submit" className="btn btn-primary">
+          {saving ? "Zapisywanie…" : editing ? "Zapisz zmiany" : "Dodaj książkę"}
+        </button>
+      </div>
     </form>
   );
 };
