@@ -16,7 +16,10 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useBooksQueryState from "../hooks/useBooksQueryState";
 
-const PAGE_SIZE = 10;
+// Books per page we ask the API for. The API echoes the size it actually
+// used (pageSize); an older API without that field always paged by 10.
+const PAGE_SIZE = 24;
+const LEGACY_PAGE_SIZE = 10;
 const sortByName = (a, b) => (a.name > b.name ? 1 : b.name > a.name ? -1 : 0);
 
 const SORT_OPTIONS = [
@@ -34,6 +37,7 @@ const BooksView = () => {
 
   const [books, setBooks] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE);
   const [categories, setCategories] = useState([]);
   const [places, setPlaces] = useState([]);
   const [categoriesLookup, setCategoriesLookup] = useState(new Map());
@@ -83,6 +87,7 @@ const BooksView = () => {
           categoryId: category,
           placeId: place,
           search: q,
+          pageSize: PAGE_SIZE,
           sortBy,
           order,
         });
@@ -90,6 +95,7 @@ const BooksView = () => {
         const { results = [], totalCount: count = 0 } = booksRes;
         setBooks(results);
         setTotalCount(count);
+        setPageSize(booksRes.pageSize || LEGACY_PAGE_SIZE);
         setError(null);
       } catch (e) {
         if (cancelled) return;
@@ -177,7 +183,10 @@ const BooksView = () => {
   const handleAdd = () => navigate("/books/add");
 
 
-  const handlePageChange = (newPage) => setQuery({ page: newPage });
+  const handlePageChange = (newPage) => {
+    setQuery({ page: newPage });
+    window.scrollTo(0, 0);
+  };
 
   const handleSort = (column) => {
     const newOrder = sortBy === column && order === "asc" ? "desc" : "asc";
@@ -379,7 +388,7 @@ const BooksView = () => {
 
       <Pagination
         itemsCount={totalCount}
-        pageSize={PAGE_SIZE}
+        pageSize={pageSize}
         onPageChange={handlePageChange}
         currentPage={page}
       />

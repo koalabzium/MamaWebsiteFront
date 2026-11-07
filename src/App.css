@@ -295,6 +295,35 @@
   row-gap: 4px;
 }
 
+.books-pagination {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 24px 0 16px;
+}
+
+.books-pagination__summary {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.books-pagination__range {
+  color: #888;
+}
+
+.books-pagination .page-link {
+  min-width: 2.4rem;
+  text-align: center;
+}
+
+/* Phones: arrows only, so the whole control fits on one line. */
+@media (max-width: 575.98px) {
+  .books-pagination__label {
+    display: none;
+  }
+}
+
 /* ---------- Books page header & active filters ---------- */
 .books-header {
   display: flex;
