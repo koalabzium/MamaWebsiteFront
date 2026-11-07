@@ -16,7 +16,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useBooksQueryState from "../hooks/useBooksQueryState";
 
-// Books per page we ask the API for. The API echoes the size it actually
+// Books per page we ask the API for. Must stay a multiple of both grid
+// column counts (2 on phones, 6 wider — see .books-grid) so pages end on a
+// full row. The API echoes the size it actually
 // used (pageSize); an older API without that field always paged by 10.
 const PAGE_SIZE = 24;
 const LEGACY_PAGE_SIZE = 10;
