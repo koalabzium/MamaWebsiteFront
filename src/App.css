@@ -245,8 +245,18 @@
     display: table-header-group;
   }
 
-  .responsive-table,
-  .responsive-table tbody,
+  /* The table and tbody must go back to real table layout too; left as
+     display:block, thead and tbody become separate anonymous tables that
+     size their columns independently, so headers don't line up. */
+  .responsive-table {
+    display: table;
+    width: 100%;
+  }
+
+  .responsive-table tbody {
+    display: table-row-group;
+  }
+
   .responsive-table tr,
   .responsive-table td,
   .responsive-table th {
@@ -980,7 +990,9 @@
   margin-bottom: 4px;
 }
 
-.admin-borrowings__filters {
+/* Extra specificity so this beats Bootstrap's .card { flex-direction:
+   column } regardless of stylesheet order. */
+.admin-borrowings .admin-borrowings__filters {
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -996,7 +1008,7 @@
 }
 
 @media (min-width: 768px) {
-  .admin-borrowings__filters {
+  .admin-borrowings .admin-borrowings__filters {
     flex-direction: row;
     align-items: flex-end;
   }
