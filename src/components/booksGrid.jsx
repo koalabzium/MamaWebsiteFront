@@ -20,7 +20,7 @@ const BooksGrid = (props) => {
           <div className="book-card__cover">
             <BookCover src={book.image} title={book.title} author={book.author} lazy />
             {isUnavailable(book) && (
-              <span className="book-card__badge">Niedostępna</span>
+              <span className="book-card__badge">Wypożyczona</span>
             )}
           </div>
 
