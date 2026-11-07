@@ -27,22 +27,25 @@ const ManagePlaces = () => {
   });
 
   return (
-    <div style={{ padding: 20 }}>
+    <div className="admin-section">
       <div className="card place">
         <div className="card-body">
-          <h2>Zarządzaj lokalizacjami </h2>
+          <h5 className="mb-1">Lokalizacje</h5>
+          <p className="text-muted small mb-3">Kliknij nazwę, żeby ją zmienić (Enter zapisuje). Nową lokalizację dodasz w ostatnim wierszu.</p>
           <table className="table table-hover">
             <tbody>
               {places.map((place) => (
                 <tr key={place.id}>
                   {editingId === place.id ? (
-                    <input
+                    <td>
+                      <input
                       className="form-control"
                       value={editedName}
                       onChange={(e) => setEditedName(e.target.value)}
                       onKeyDown={(e) => handleEdit(e, place)}
                       noValidate
                     />
+                    </td>
                   ) : (
                     <td onClick={() => startEdit(place)}>{place.name}</td>
                   )}
@@ -58,7 +61,8 @@ const ManagePlaces = () => {
                 </tr>
               ))}
               <tr>
-                <input
+                <td colSpan={2}>
+                  <input
                   className="form-control"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
@@ -66,6 +70,7 @@ const ManagePlaces = () => {
                   placeholder="Nowa kategoria..."
                   noValidate
                 />
+                </td>
               </tr>
             </tbody>
           </table>

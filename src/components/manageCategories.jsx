@@ -27,22 +27,25 @@ const ManageCategories = () => {
   });
 
   return (
-    <div style={{ padding: 20 }}>
-      <div className="card category">
+    <div className="admin-section">
+      <div className="card admin-section__card">
         <div className="card-body">
-          <h2>Zarządzaj kategoriami </h2>
+          <h5 className="mb-1">Kategorie</h5>
+          <p className="text-muted small mb-3">Kliknij nazwę, żeby ją zmienić (Enter zapisuje). Nową kategorię dodasz w ostatnim wierszu.</p>
           <table className="table table-hover">
             <tbody>
               {categories.map((category) => (
                 <tr key={category.id}>
                   {editingId === category.id ? (
-                    <input
+                    <td>
+                      <input
                       className="form-control"
                       value={editedName}
                       onChange={(e) => setEditedName(e.target.value)}
                       onKeyDown={(e) => handleEdit(e, category)}
                       noValidate
                     />
+                    </td>
                   ) : (
                     <td onClick={() => startEdit(category)}>
                       {category.name}
@@ -60,7 +63,8 @@ const ManageCategories = () => {
                 </tr>
               ))}
               <tr>
-                <input
+                <td colSpan={2}>
+                  <input
                   className="form-control"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
@@ -68,6 +72,7 @@ const ManageCategories = () => {
                   placeholder="Nowa kategoria..."
                   noValidate
                 />
+                </td>
               </tr>
             </tbody>
           </table>
