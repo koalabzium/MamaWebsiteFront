@@ -39,10 +39,11 @@ const LoginForm = ({ onLogin }) => {
   };
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-xl-5 col-lg-6 col-md-8 col-sm-10 mx-auto form p-4">
-          <h1>Zaloguj się</h1>
+    <div className="admin-login">
+      <div className="card admin-login__card">
+        <div className="card-body">
+          <h1 className="admin-login__title">Panel adminki</h1>
+          <p className="text-muted mb-4">Zaloguj się, żeby zarządzać biblioteką.</p>
           <form className="justify-content-center" onSubmit={handleSubmit}>
             {errors && (
               <div className="alert alert-danger">
@@ -74,7 +75,7 @@ const LoginForm = ({ onLogin }) => {
                 placeholder="Podaj hasło"
               ></input>
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary btn-block">
               Zaloguj
             </button>
           </form>

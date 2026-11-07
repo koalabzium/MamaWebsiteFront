@@ -6,6 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is the frontend for **Biblioteka Zosi** / "MamaLibrary" — a library/book-lending management app (books, categories, places/shelves, readers, borrowings, admin login). It's a Create React App (React 16 + react-router-dom v6 + Material-UI + react-bootstrap) and is normally checked out as a sibling of its backend counterpart, `MamaWebsiteAPI` (`koalabzium/MamaWebsiteAPI`, a separate git repo/remote) — the two are developed together but versioned independently.
 
+## Development workflow
+
+Keep it simple and use as few branches as possible:
+- **One branch per working session** (per repo), even when the session covers several unrelated changes. Don't create a separate branch per feature or fix; keep adding commits to the session's branch.
+- Branch from an up-to-date `master`. If the session already has a branch in that repo, use it rather than starting another.
+- One PR per session branch into `master`. Merging to `master` auto-deploys to staging; production is a separate `master` → `production` PR.
+- Delete the branch once it's merged.
+
 ## Commands
 
 - `npm start` — dev server on http://localhost:3000
@@ -13,7 +21,7 @@ This is the frontend for **Biblioteka Zosi** / "MamaLibrary" — a library/book-
 - `npm test` — CRA/Jest test runner (interactive watch mode); e.g. `npm test -- --testPathPattern=App` for a single file, or run non-interactively with `CI=true npm test`
 - `npm run deploy` — builds and publishes `build/` to GitHub Pages (`gh-pages -d build`)
 
-CI deploys (GitHub Actions, `.github/workflows/`): pushing to `staging` deploys to Firebase Hosting staging (https://mamusialibrary-staging.web.app, against the staging API); pushing to `production` builds against the prod API and publishes to GitHub Pages after approval in the `production` GitHub Environment.
+CI deploys (GitHub Actions, `.github/workflows/`): every push to `master` (i.e. every merged PR) deploys to Firebase Hosting staging (https://mamusialibrary-staging.web.app, against the staging API). To preview a branch on staging before merging, run the workflow manually: `gh workflow run deploy-staging.yml --ref <branch>`. Pushing to `production` builds against the prod API and publishes to GitHub Pages after approval in the `production` GitHub Environment.
 
 Env config: `.env.development` and `.env.production` set `REACT_APP_API_URL`, the base URL of the deployed backend (europe-west1 Cloud Function). CRA injects it at build time — after changing it you must restart `npm start` / rebuild.
 

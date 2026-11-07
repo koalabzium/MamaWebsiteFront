@@ -83,7 +83,7 @@ const AdminBorrowings = () => {
 
   return (
     <div className="admin-borrowings">
-      <div className="admin-borrowings__filters">
+      <div className="admin-borrowings__filters card card-body">
         <div className="admin-borrowings__filter">
           <label htmlFor="filter-reader">Czytelniczka / czytelnik</label>
           <Select
@@ -137,9 +137,8 @@ const AdminBorrowings = () => {
       ) : (
         <>
           <div className="text-muted small mb-2">Wypożyczeń: {visible.length}</div>
-          {/* Reuses the books table's mobile-first styles: stacked cards on
-              phones, a regular table from md up. */}
-          <table className="table books-table">
+          {/* Stacked cards on phones, a regular table from md up. */}
+          <table className="table responsive-table">
             <thead>
               <tr>
                 <th>Książka</th>
