@@ -203,6 +203,14 @@ const BooksView = () => {
     setQuery({ q: searchInput, page: 1 });
   };
 
+  // From the book modal: show the catalogue for an author / category /
+  // location, replacing the current filters and closing the modal.
+  const handleBrowse = (partial) => {
+    setSearchInput(partial.q || "");
+    setQuery({ q: null, category: null, place: null, ...partial, page: 1, bookId: null });
+    window.scrollTo(0, 0);
+  };
+
   const clearSearch = () => {
     setSearchInput("");
     setQuery({ q: null, page: 1 });
@@ -404,6 +412,8 @@ const BooksView = () => {
         onEdit={handleEdit}
         onBorrow={handleBorrow}
         onBorrowingsChanged={reloadCurrentBook}
+        onBrowse={handleBrowse}
+        onSelectBook={(book) => setQuery({ bookId: book.id })}
       />
     </React.Fragment>
   );
