@@ -19,7 +19,11 @@ const App = () => (
         <Route path={"/books/:id/edit"} element={<EditBookScreen />} />
         <Route path={"/books/:id/borrow"} element={<BorrowBookScreen />} />
         <Route path={"/admin"} element={<AdminPanel />} />
-        <Route path={"/admin/borrowings"} element={<AdminPanel section="borrowings" />} />
+        {/* Old link to the borrowings tab, which is now the /admin default. */}
+        <Route path={"/admin/borrowings"} element={<Navigate to="/admin" replace />} />
+        <Route path={"/admin/readers"} element={<AdminPanel section="readers" />} />
+        <Route path={"/admin/categories"} element={<AdminPanel section="categories" />} />
+        <Route path={"/admin/places"} element={<AdminPanel section="places" />} />
 
         <Route path={"/not-found"} element={<NotFound />} />
         <Route path={"*"} element={<NotFound />} />

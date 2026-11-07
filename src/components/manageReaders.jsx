@@ -55,22 +55,25 @@ const ManageReaders = () => {
 
   return (
     <React.Fragment>
-      <div style={{ padding: 20 }}>
-        <div className="card category">
+      <div className="admin-section">
+        <div className="card admin-section__card">
           <div className="card-body">
-            <h2>Czytelniczki i czytelnicy </h2>
+            <h5 className="mb-1">Czytelniczki i czytelnicy</h5>
+          <p className="text-muted small mb-3">Kliknij nazwę, żeby ją zmienić (Enter zapisuje). Nową osobę dodasz w ostatnim wierszu.</p>
             <table className="table table-hover">
               <tbody>
                 {readers.map((reader) => (
                   <tr key={reader.id}>
                     {editingId === reader.id ? (
-                      <input
+                      <td>
+                        <input
                         className="form-control"
                         value={editedName}
                         onChange={(e) => setEditedName(e.target.value)}
                         onKeyDown={(e) => handleEdit(e, reader)}
                         noValidate
                       />
+                      </td>
                     ) : (
                       <td onClick={() => startEdit(reader)}>{reader.name}</td>
                     )}
@@ -94,7 +97,8 @@ const ManageReaders = () => {
                   </tr>
                 ))}
                 <tr>
-                  <input
+                  <td colSpan={3}>
+                    <input
                     className="form-control"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
@@ -102,6 +106,7 @@ const ManageReaders = () => {
                     placeholder="Nowa czytelniczka..."
                     noValidate
                   />
+                  </td>
                 </tr>
               </tbody>
             </table>
