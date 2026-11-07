@@ -30,7 +30,10 @@ const AdminPanel = ({ section = "borrowings" }) => {
   return (
     <div className="admin-panel">
       <div className="admin-panel__header">
-        <h1>Witaj Marysiu!</h1>
+        <div>
+          <div className="admin-panel__eyebrow">Panel adminki</div>
+          <h1>Witaj Marysiu!</h1>
+        </div>
         <button onClick={logout} className="btn btn-outline-primary btn-sm">
           Wyloguj się
         </button>
@@ -46,7 +49,9 @@ const AdminPanel = ({ section = "borrowings" }) => {
         ))}
       </ul>
 
-      <Component />
+      <div className="admin-panel__content">
+        <Component />
+      </div>
     </div>
   );
 };

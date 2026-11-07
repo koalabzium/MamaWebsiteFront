@@ -78,21 +78,7 @@
   }
 }
 
-/* View toggle (grid/list) is a desktop-only affordance: mobile always gets
-   the cover-image grid, which is what actually works at phone widths. */
-.books-toolbar__view-toggle {
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .books-toolbar__view-toggle {
-    display: block;
-  }
-}
-
-/* Bookstore-style cover grid — the default, mobile-first books view.
-   auto-fill keeps 2 narrow columns on a phone and grows the column count
-   as there's room, without any hand-picked breakpoints. */
+/* Bookstore-style cover grid — the books list view. */
 /* Fixed column counts so rows are always full: 2 per row on phones, 6 from
    tablet width up. Columns stretch to fill the width. The page size (24,
    see books.jsx) is a multiple of both, so every page except possibly the
@@ -208,91 +194,91 @@
   line-height: 1;
 }
 
-/* Mobile-first books table: stacked "cards" by default, real table once
-   there's enough width to show every column comfortably. */
-.books-table thead {
+/* Mobile-first data table (admin borrowings list): stacked "cards" by
+   default, a real table once there's enough width for every column. */
+.responsive-table thead {
   display: none;
 }
 
-.books-table,
-.books-table tbody,
-.books-table tr,
-.books-table td {
+.responsive-table,
+.responsive-table tbody,
+.responsive-table tr,
+.responsive-table td {
   display: block;
   width: 100%;
 }
 
-.books-table tr {
+.responsive-table tr {
   border: 1px solid #dee2e6;
   border-radius: 6px;
   margin-bottom: 10px;
   padding: 8px 10px;
 }
 
-.books-table td {
+.responsive-table td {
   border: none;
   padding: 4px 0;
   text-align: right;
 }
 
-.books-table td::before {
+.responsive-table td::before {
   content: attr(data-label);
   float: left;
   font-weight: bold;
   padding-right: 10px;
 }
 
-.books-table td.actions-cell {
+.responsive-table td.actions-cell {
   text-align: right;
 }
 
-.books-table td.actions-cell::before {
+.responsive-table td.actions-cell::before {
   content: none;
 }
 
-.books-table td.actions-cell button {
+.responsive-table td.actions-cell button {
   margin-left: 6px;
 }
 
 @media (min-width: 768px) {
-  .books-table thead {
+  .responsive-table thead {
     display: table-header-group;
   }
 
-  .books-table,
-  .books-table tbody,
-  .books-table tr,
-  .books-table td,
-  .books-table th {
+  .responsive-table,
+  .responsive-table tbody,
+  .responsive-table tr,
+  .responsive-table td,
+  .responsive-table th {
     width: auto;
   }
 
-  .books-table tr {
+  .responsive-table tr {
     display: table-row;
     border: none;
     margin-bottom: 0;
     padding: 0;
   }
 
-  .books-table td,
-  .books-table th {
+  .responsive-table td,
+  .responsive-table th {
     display: table-cell;
   }
 
-  .books-table td {
+  .responsive-table td {
     padding: 0.75rem;
     text-align: left;
   }
 
-  .books-table td::before {
+  .responsive-table td::before {
     content: none;
   }
 
-  .books-table td.actions-cell {
+  .responsive-table td.actions-cell {
     white-space: nowrap;
   }
 
-  .books-table td.actions-cell button {
+  .responsive-table td.actions-cell button {
     margin-left: 0;
     margin-right: 4px;
   }
@@ -908,17 +894,36 @@
 }
 
 /* ---------- Admin panel ---------- */
-.admin-panel {
-  padding: 8px 4px;
+/* Every admin view sits in one centred column: wide enough for the
+   borrowings table, while the simple list editors are narrower cards
+   centred inside it. */
+.admin-panel,
+.admin-login {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px 12px 32px;
 }
 
 .admin-panel__header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-panel__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6c757d;
+}
+
+.admin-panel__header h1 {
+  font-size: 1.6rem;
+  margin: 0;
 }
 
 /* Tabs scroll sideways inside themselves on narrow screens rather than
@@ -927,31 +932,61 @@
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
+  margin-bottom: 20px !important;
 }
 
 .admin-panel__tabs .nav-link {
   white-space: nowrap;
 }
 
+.admin-section {
+  display: flex;
+  justify-content: center;
+}
+
 .admin-section__card {
-  max-width: 40rem;
+  width: 100%;
+  max-width: 560px;
   border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.admin-section__card .table {
+  margin-bottom: 0;
 }
 
 .admin-section__card td {
   vertical-align: middle;
 }
 
-.admin-panel__header h1 {
+.admin-section__card td:not(:first-child) {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.admin-login__card {
+  max-width: 420px;
+  margin: 24px auto 0;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+}
+
+.admin-login__card .card-body {
+  padding: 28px;
+}
+
+.admin-login__title {
   font-size: 1.6rem;
-  margin: 0;
+  margin-bottom: 4px;
 }
 
 .admin-borrowings__filters {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 14px;
+  gap: 12px;
+  margin-bottom: 16px;
+  border-radius: 10px;
+  background: #fafafa;
 }
 
 .admin-borrowings__filter label {
@@ -967,10 +1002,12 @@
   }
 
   .admin-borrowings__filter {
-    flex: 0 1 280px;
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .admin-borrowings__toggle {
+    flex: 0 0 auto;
     margin-bottom: 8px;
   }
 }

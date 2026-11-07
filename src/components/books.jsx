@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Pagination from "./common/pagination";
-import BooksTable from "./booksTable";
 import BooksGrid from "./booksGrid";
 import Categories from "./categories";
 import Places from "./places";
-import { ViewModule, ViewList, Add, Close } from "@material-ui/icons/";
+import { Add, Close } from "@material-ui/icons/";
 import { getBooks, deleteBook, getBook } from "../services/bookService";
 import { getCategories } from "../services/categoryService";
 import { confirmAlert } from "react-confirm-alert";
@@ -34,7 +33,7 @@ const BooksView = () => {
   const { isLoggedIn: logged } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const { q, category, place, sortBy, order, page, bookId, view, setQuery } =
+  const { q, category, place, sortBy, order, page, bookId, setQuery } =
     useBooksQueryState();
 
   const [books, setBooks] = useState([]);
@@ -299,48 +298,20 @@ const BooksView = () => {
             </div>
           </form>
 
-          {/* Sorting only needs its own control in the grid view — the
-              table view already sorts via its clickable column headers. */}
-          {view === "grid" && (
-            <div className={"form-element"}>
-              <Dropdown>
-                <Dropdown.Toggle variant="outline-secondary" id="dropdown-sort">
-                  Sortuj: {SORT_OPTIONS.find((o) => o.column === sortBy)?.label}{" "}
-                  {order === "asc" ? "↑" : "↓"}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  {SORT_OPTIONS.map(({ column, label }) => (
-                    <Dropdown.Item key={column} onClick={() => handleSort(column)}>
-                      {label} {sortBy === column && (order === "asc" ? "↑" : "↓")}
-                    </Dropdown.Item>
-                  ))}
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          )}
-
-          {/* Grid is the mobile-first default view; switching to the dense
-              table is offered only once there's room for it (md+ — the
-              toggle itself is hidden below that via CSS). */}
-          <div className={"form-element books-toolbar__view-toggle"}>
-            <div className="btn-group" role="group" aria-label="Widok">
-              <button
-                type="button"
-                className={`btn btn-outline-secondary${view === "grid" ? " active" : ""}`}
-                title="Widok siatki"
-                onClick={() => setQuery({ view: "grid" })}
-              >
-                <ViewModule />
-              </button>
-              <button
-                type="button"
-                className={`btn btn-outline-secondary${view === "list" ? " active" : ""}`}
-                title="Widok listy"
-                onClick={() => setQuery({ view: "list" })}
-              >
-                <ViewList />
-              </button>
-            </div>
+          <div className={"form-element"}>
+            <Dropdown>
+              <Dropdown.Toggle variant="outline-secondary" id="dropdown-sort">
+                Sortuj: {SORT_OPTIONS.find((o) => o.column === sortBy)?.label}{" "}
+                {order === "asc" ? "↑" : "↓"}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                {SORT_OPTIONS.map(({ column, label }) => (
+                  <Dropdown.Item key={column} onClick={() => handleSort(column)}>
+                    {label} {sortBy === column && (order === "asc" ? "↑" : "↓")}
+                  </Dropdown.Item>
+                ))}
+              </Dropdown.Menu>
+            </Dropdown>
           </div>
         </div>
 
@@ -370,30 +341,16 @@ const BooksView = () => {
           </div>
         )}
 
-        {view === "list" ? (
-          <BooksTable
-            books={books}
-            categories={categoriesLookup}
-            places={placesLookup}
-            onDelete={confirmDelete}
-            onEdit={handleEdit}
-            onSort={handleSort}
-            onBorrow={handleBorrow}
-            onClick={(book) => setQuery({ bookId: book.id })}
-            logged={logged}
-          />
-        ) : (
-          <BooksGrid
-            books={books}
-            categories={categoriesLookup}
-            places={placesLookup}
-            onDelete={confirmDelete}
-            onEdit={handleEdit}
-            onBorrow={handleBorrow}
-            onClick={(book) => setQuery({ bookId: book.id })}
-            logged={logged}
-          />
-        )}
+        <BooksGrid
+          books={books}
+          categories={categoriesLookup}
+          places={placesLookup}
+          onDelete={confirmDelete}
+          onEdit={handleEdit}
+          onBorrow={handleBorrow}
+          onClick={(book) => setQuery({ bookId: book.id })}
+          logged={logged}
+        />
       </div>
 
       <Pagination
